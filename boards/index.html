@@ -381,28 +381,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#companion_radio_wifi-boards-with-a-display" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        companion_radio_wifi Boards With A Display
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#companion_radio_wifi-headless-boards" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        companion_radio_wifi Headless Boards
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#practical-picks" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -679,28 +657,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#companion_radio_wifi-boards-with-a-display" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        companion_radio_wifi Boards With A Display
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#companion_radio_wifi-headless-boards" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        companion_radio_wifi Headless Boards
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#practical-picks" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -737,14 +693,7 @@
 <h1 id="board-comparison">Board Comparison<a class="headerlink" href="#board-comparison" title="Permanent link">&para;</a></h1>
 <p>This page is meant to help you choose a board, not just list every technical detail.</p>
 <h2 id="start-here">Start Here<a class="headerlink" href="#start-here" title="Permanent link">&para;</a></h2>
-<p>If you are new to MeshCore hardware and just want a sensible starting point, first decide whether the device is a companion or a repeater.</p>
-<p>For companions, think Wi-Fi-connected automation endpoint:</p>
-<ul>
-<li>use companion Wi-Fi builds when another system, such as Home Assistant, RemoteTerm, or your own tooling, needs to connect to MeshCore over Wi-Fi</li>
-<li>these are usually not hands-on daily devices, so a screen is optional rather than a must-have</li>
-<li>headless or simple boards are often fine when the companion will sit near power and be managed from another app or automation system</li>
-<li>check the companion tables below when you do want a display, GPS, or a more complete board package</li>
-</ul>
+<p>If you are new to MeshCore hardware and just want a sensible starting point, this page covers the EastMesh repeater tracks. For Wi-Fi companion devices, use the official upstream MeshCore <code>*_companion_radio_wifi</code> firmware; EastMesh no longer publishes a companion Wi-Fi track.</p>
 <p>For MQTT/web repeaters, think Wi-Fi, broker visibility, and enough headroom for the local web panel:</p>
 <ul>
 <li>common starting points are <code>Heltec_v3</code> and <code>heltec_v4</code></li>
@@ -762,7 +711,7 @@
 </ul>
 <p>Other notes:</p>
 <ul>
-<li>screens matter more for companions or bench/field devices than fixed repeaters</li>
+<li>screens matter more for bench/field devices than fixed repeaters</li>
 <li>if you do want an onboard screen people will actually use, prefer TFT boards</li>
 <li>if you want a low-power status screen, prefer e-paper boards</li>
 <li>if location-aware or mobile use matters, prefer GPS-capable boards such as the T-Beam family, <code>heltec_tracker_v2</code>, <code>Heltec_v3</code>, <code>heltec_v4</code>, or <code>ThinkNode_M5</code></li>
@@ -780,7 +729,6 @@
 </ul>
 <h2 id="track-notes">Track Notes<a class="headerlink" href="#track-notes" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>companion-wifi</code> boards are for app-connected companion devices.</li>
 <li><code>observer-eastmesh</code> boards are for Wi-Fi repeaters that publish to MQTT.</li>
 <li><code>repeater-bridge-espnow</code> and <code>observer-eastmesh-bridge-espnow</code> boards are for local ESP-NOW bridge use between nearby repeaters on different MeshCore radio configs.</li>
 </ul>
@@ -1487,206 +1435,11 @@
 <li><code>🧪</code> means the board hardware likely supports TF/microSD, but the EastMesh board-specific integration still needs validation before it should be treated as supported.</li>
 <li>For the current stats archive, a <code>4 GB</code> <code>FAT32</code> microSD card is more than sufficient. Larger cards are also supported.</li>
 </ul>
-<h2 id="companion_radio_wifi-boards-with-a-display"><code>companion_radio_wifi</code> Boards With A Display<a class="headerlink" href="#companion_radio_wifi-boards-with-a-display" title="Permanent link">&para;</a></h2>
-<p>These are the Wi-Fi companion targets that have a display configured for local status, setup help, or occasional direct interaction.</p>
-<table>
-<thead>
-<tr>
-<th>Target</th>
-<th>MCU</th>
-<th>RAM</th>
-<th>PSRAM</th>
-<th>Flash</th>
-<th>LoRa</th>
-<th>Display</th>
-<th>GPS</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Heltec_v2</td>
-<td>ESP32</td>
-<td>520 KB</td>
-<td>No</td>
-<td>8 MB</td>
-<td>SX1276</td>
-<td>OLED (SSD1306)</td>
-<td></td>
-</tr>
-<tr>
-<td>Heltec_v3</td>
-<td>ESP32S3</td>
-<td>512 KB</td>
-<td>No</td>
-<td>8 MB</td>
-<td>SX1262</td>
-<td>OLED (SSD1306)</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>heltec_tracker_v2</td>
-<td>ESP32S3</td>
-<td>512 KB</td>
-<td>No</td>
-<td>8MB</td>
-<td>SX1262</td>
-<td>TFT (ST7735)</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>heltec_v4</td>
-<td>ESP32S3</td>
-<td>512 KB</td>
-<td>2 MB</td>
-<td>16MB</td>
-<td>SX1262</td>
-<td>OLED (SSD1306)</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>heltec_v4_tft</td>
-<td>ESP32S3</td>
-<td>512 KB</td>
-<td>2 MB</td>
-<td>16MB</td>
-<td>SX1262</td>
-<td>TFT (ST7789)</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>LilyGo_TBeam_1W</td>
-<td>ESP32S3</td>
-<td>512 KB</td>
-<td>8 MB</td>
-<td>16MB</td>
-<td>SX1262</td>
-<td>OLED (SH1106)</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>LilyGo_TLora_V2_1_1_6</td>
-<td>ESP32</td>
-<td>520 KB</td>
-<td>No</td>
-<td>4 MB</td>
-<td>SX1276</td>
-<td>OLED (SSD1306)</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>nibble_screen_connect</td>
-<td>ESP32S3</td>
-<td>512 KB</td>
-<td>No</td>
-<td>4MB</td>
-<td>SX1262</td>
-<td>OLED (SSD1306)</td>
-<td></td>
-</tr>
-<tr>
-<td>Station_G2</td>
-<td>ESP32S3</td>
-<td>512 KB</td>
-<td>8 MB</td>
-<td>16MB</td>
-<td>SX1262</td>
-<td>OLED (SH1106)</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>T_Beam_S3_Supreme_SX1262</td>
-<td>ESP32S3</td>
-<td>512 KB</td>
-<td>8 MB</td>
-<td>8MB</td>
-<td>SX1262</td>
-<td>OLED (SH1106)</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>ThinkNode_M2</td>
-<td>ESP32S3</td>
-<td>512 KB</td>
-<td>No</td>
-<td>4MB</td>
-<td>SX1262</td>
-<td>OLED (SH1106)</td>
-<td></td>
-</tr>
-<tr>
-<td>ThinkNode_M5</td>
-<td>ESP32S3</td>
-<td>512 KB</td>
-<td>No</td>
-<td>4MB</td>
-<td>SX1262</td>
-<td>E-paper (GxEPD)</td>
-<td>✅</td>
-</tr>
-</tbody>
-</table>
-<h2 id="companion_radio_wifi-headless-boards"><code>companion_radio_wifi</code> Headless Boards<a class="headerlink" href="#companion_radio_wifi-headless-boards" title="Permanent link">&para;</a></h2>
-<p>These are the Wi-Fi companion targets that rely on the companion app as the primary interface. For many users, this is the best everyday option.</p>
-<table>
-<thead>
-<tr>
-<th>Target</th>
-<th>MCU</th>
-<th>RAM</th>
-<th>PSRAM</th>
-<th>Flash</th>
-<th>LoRa</th>
-<th>GPS</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Heltec_WSL3</td>
-<td>ESP32S3</td>
-<td>512 KB</td>
-<td>No</td>
-<td>8 MB</td>
-<td>SX1262</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>RAK_3112</td>
-<td>ESP32S3</td>
-<td>512 KB</td>
-<td>No</td>
-<td>8 MB</td>
-<td>SX1262</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>Xiao_S3_LoRa2021F33-2G4</td>
-<td>ESP32S3</td>
-<td>512 KB</td>
-<td>No</td>
-<td>8 MB</td>
-<td>LR2021</td>
-<td></td>
-</tr>
-<tr>
-<td>Xiao_S3_WIO</td>
-<td>ESP32S3</td>
-<td>512 KB</td>
-<td>No</td>
-<td>8 MB</td>
-<td>SX1262</td>
-<td>✅</td>
-</tr>
-</tbody>
-</table>
 <h2 id="practical-picks">Practical Picks<a class="headerlink" href="#practical-picks" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Best all-round observer with screen and overall headroom: <code>heltec_v4_repeater_observer</code>, <code>heltec_v4_tft_repeater_observer</code>, <code>Station_G2_repeater_observer</code>, <code>LilyGo_TBeam_1W_repeater_observer</code>.</li>
 <li>Best observer if you want a simple headless install: <code>RAK_3112_repeater_observer</code>, <code>Generic_E22_sx1262_repeater_observer</code>, <code>Meshimi_repeater_observer</code>, <code>Xiao_C6_repeater_observer</code>.</li>
 <li>Best low-power display observer builds: <code>Heltec_E213_repeater_observer</code>, <code>Heltec_E290_repeater_observer</code>, <code>Heltec_Wireless_Paper_repeater_observer</code>, <code>ThinkNode_M5_Repeater_observer</code>.</li>
-<li>Best companion choices if you want the richest local UI: <code>heltec_v4_tft_companion_radio_wifi</code> and <code>heltec_tracker_v2_companion_radio_wifi</code>.</li>
-<li>Best companion choices if you want maximum memory headroom: <code>T_Beam_S3_Supreme_SX1262_companion_radio_wifi</code>, <code>Station_G2_companion_radio_wifi</code>, <code>LilyGo_TBeam_1W_companion_radio_wifi</code>.</li>
-<li>Best companion choices if you are happy with an app-first, mostly headless setup: <code>RAK_3112_companion_radio_wifi</code>, <code>Xiao_S3_WIO_companion_radio_wifi</code>, <code>Station_G2_companion_radio_wifi</code>.</li>
-<li>Best companion choices if you prefer OLED over TFT: <code>T_Beam_S3_Supreme_SX1262_companion_radio_wifi</code>, <code>heltec_v4_companion_radio_wifi</code>, <code>LilyGo_TBeam_1W_companion_radio_wifi</code>.</li>
 </ul>
 
 

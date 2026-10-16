@@ -519,17 +519,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#companion-wi-fi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Companion Wi-Fi
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -885,17 +874,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#companion-wi-fi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Companion Wi-Fi
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -942,9 +920,9 @@
 <li>Click <code>Flash Firmware</code>.</li>
 <li>After flashing, finish setup with <code>Open MeshCore Config Panel</code> or the <code>Serial Console</code>.</li>
 </ol>
-<p>If you are not sure which track you need, start with <code>companion-wifi</code> for app-connected companion devices or <code>observer-eastmesh</code> for a fixed repeater that should publish to MQTT.</p>
+<p>If you are not sure which track you need, start with <code>observer-eastmesh</code> for a fixed repeater that should publish to MQTT. For Wi-Fi companion devices, use the official upstream MeshCore <code>*_companion_radio_wifi</code> firmware instead; EastMesh no longer publishes a companion Wi-Fi track.</p>
 <h2 id="pick-your-track">Pick Your Track<a class="headerlink" href="#pick-your-track" title="Permanent link">&para;</a></h2>
-<p>EastMesh publishes four release tracks:</p>
+<p>EastMesh publishes these release tracks:</p>
 <table>
 <thead>
 <tr>
@@ -954,11 +932,6 @@
 </tr>
 </thead>
 <tbody>
-<tr>
-<td><code>companion-wifi</code></td>
-<td>You want a companion device that connects over Wi-Fi instead of BLE or USB.</td>
-<td><code>*_companion_radio_wifi</code></td>
-</tr>
 <tr>
 <td><code>observer-eastmesh</code></td>
 <td>You want a repeater with Wi-Fi and MQTT uplink, usually feeding broker visibility such as EastMesh/CoreScope.</td>
@@ -985,7 +958,6 @@
 <p>Download the asset that matches your board and firmware type.</p>
 <p>Examples:</p>
 <ul>
-<li><code>heltec_v4_companion_radio_wifi-v1.14.1-abcdef.bin</code></li>
 <li><code>heltec_v4_repeater_observer-v1.15.0-eastmesh-v2026.5.1-abcdef.bin</code></li>
 <li><code>heltec_v4_repeater_observer-v1.15.0-eastmesh-v2026.5.1-abcdef-merged.bin</code></li>
 <li><code>heltec_v4_repeater_bridge_espnow-v1.15.0-abcdef.bin</code></li>
@@ -993,7 +965,6 @@
 </ul>
 <p>The important part is the board/env prefix:</p>
 <ul>
-<li><code>*_companion_radio_wifi</code></li>
 <li><code>*_repeater_observer</code></li>
 <li><code>*_repeater_bridge_espnow</code></li>
 <li><code>*_repeater_observer_espnow</code></li>
@@ -1028,7 +999,6 @@
 </ul>
 <p>It includes native support for the common EastMesh firmware types and can also flash custom firmware files:</p>
 <ul>
-<li><code>companion_radio_wifi</code> firmware</li>
 <li><code>repeater_observer</code> firmware</li>
 <li>custom firmware files</li>
 </ul>
@@ -1068,7 +1038,6 @@
 </ul>
 <p>This applies to:</p>
 <ul>
-<li><code>companion_radio_wifi</code></li>
 <li><code>repeater_observer</code></li>
 <li><code>repeater_observer_espnow</code></li>
 </ul>
@@ -1116,14 +1085,6 @@
 <li>set the intended MeshCore radio preset/config</li>
 <li>set the same bridge channel and secret on the local bridge pair</li>
 <li>confirm both bridge repeaters are physically nearby enough for ESP-NOW to work</li>
-</ul>
-<h3 id="companion-wi-fi">Companion Wi-Fi<a class="headerlink" href="#companion-wi-fi" title="Permanent link">&para;</a></h3>
-<p><code>companion_radio_wifi</code> builds are for companion devices that expose the app interface over Wi-Fi instead of BLE or USB.</p>
-<p>Typical first steps after flashing:</p>
-<ul>
-<li>set Wi-Fi credentials</li>
-<li>confirm <code>get wifi.status</code></li>
-<li>connect your client app to the companion over Wi-Fi</li>
 </ul>
 
 

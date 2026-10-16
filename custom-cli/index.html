@@ -657,45 +657,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#companion-wi-fi-rescue-commands" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Companion Wi-Fi Rescue Commands
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Companion Wi-Fi Rescue Commands">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#recovery-access-point" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Recovery Access Point
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-the-companion-app-over-the-ap-roaming" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using the Companion App over the AP (Roaming)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#heap-health-check-script" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -926,45 +887,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#companion-wi-fi-rescue-commands" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Companion Wi-Fi Rescue Commands
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Companion Wi-Fi Rescue Commands">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#recovery-access-point" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Recovery Access Point
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-the-companion-app-over-the-ap-roaming" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using the Companion App over the AP (Roaming)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#heap-health-check-script" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1175,28 +1097,26 @@
 <li>On observer builds, background battery sampling used for MQTT/status history is rate-limited to about once per minute. Explicit status and telemetry requests still refresh the reading immediately.</li>
 </ul>
 <h3 id="t-beam-1w-fan-control">T-Beam 1W Fan Control<a class="headerlink" href="#t-beam-1w-fan-control" title="Permanent link">&para;</a></h3>
-<p>These commands are only available on <code>LilyGo_TBeam_1W_*</code> repeater builds.</p>
+<p>These commands come from upstream MeshCore and are available on <code>LilyGo_TBeam_1W_*</code> builds (repeater, room server, and companion CLI).</p>
 <ul>
-<li><code>get fan</code>: shows the current fan mode, current fan state, and the last NTC-based board temperature when available.</li>
-<li><code>set fan auto</code>: returns the fan to automatic control and persists that mode across reboot.</li>
+<li><code>get fan</code>: shows the fan mode, last NTC board temperature, fan state, and remaining TX cooldown, for example <code>&gt; auto 34.5C fan=on cd=12s</code>.</li>
+<li><code>set fan auto</code>: thermal control with hysteresis plus a post-TX cooldown; persists across reboot.</li>
 <li><code>set fan on</code>: forces the fan on and persists that mode across reboot.</li>
 <li><code>set fan off</code>: forces the fan off and persists that mode across reboot.</li>
-<li><code>set fan timeout &lt;Ns&gt;</code>: changes the automatic post-TX hold window in seconds and persists it across reboot, for example <code>set fan timeout 45s</code>.</li>
+<li><code>set fan.lo &lt;C&gt;</code>: auto mode turns the fan off below this temperature (<code>0</code>-<code>100</code>, must be below <code>fan.hi</code>).</li>
+<li><code>set fan.hi &lt;C&gt;</code>: auto mode turns the fan on at or above this temperature (must be above <code>fan.lo</code>, max <code>120</code>).</li>
 </ul>
 <p>Auto mode behaviour:</p>
 <ul>
-<li>forces the fan on during TX and keeps it on for the configured timeout afterward</li>
-<li>otherwise turns the fan on at <code>48C</code></li>
-<li>turns it back off at <code>42C</code></li>
-<li>keeps the fan on if the NTC reading is unavailable</li>
+<li>turns the fan on during TX and keeps it on for <code>15s</code> afterward</li>
+<li>otherwise turns the fan on at <code>fan.hi</code> (default <code>36C</code>) and off below <code>fan.lo</code> (default <code>30C</code>)</li>
+<li>keeps the fan on if the NTC reading is unavailable or implausible</li>
 </ul>
 <p>Notes:</p>
 <ul>
-<li>default repeater fan mode is <code>auto</code></li>
-<li>default post-TX timeout is <code>30s</code></li>
-<li>fan mode and timeout are stored in repeater prefs and survive reboot</li>
-<li>only <code>LilyGo_TBeam_1W_*</code> repeater builds use these persisted fan settings</li>
-<li>accepted range is <code>0s</code> to <code>600s</code></li>
+<li>default fan mode is <code>auto</code></li>
+<li>the earlier EastMesh <code>set fan timeout &lt;Ns&gt;</code> command has been removed; the post-TX cooldown is now fixed</li>
+<li>fan settings saved by older EastMesh builds are not migrated, so the fan returns to <code>auto</code> with the default thresholds after upgrading</li>
 </ul>
 <h2 id="web-panel-cli-access">Web Panel CLI Access<a class="headerlink" href="#web-panel-cli-access" title="Permanent link">&para;</a></h2>
 <p>When the repeater web panel is enabled and you are authenticated, the browser CLI panel can run the same CLI commands accepted by the repeater.</p>
@@ -1210,107 +1130,6 @@
 <li>the web <code>Purge SD</code> button runs <code>purge sd</code> after browser confirmation</li>
 <li><code>start ota</code> uses the repeater's existing Wi-Fi address when already connected, or starts the <code>MeshCore-OTA</code> access point when Wi-Fi is not connected</li>
 <li>the <code>/app</code> Regions shortcut runs the existing MeshCore region commands in sequence: <code>region put au</code>, <code>region put au-STATE</code>, <code>region allowf au</code>, <code>region allowf au-STATE</code>, then <code>region save</code></li>
-</ul>
-<h2 id="companion-wi-fi-rescue-commands">Companion Wi-Fi Rescue Commands<a class="headerlink" href="#companion-wi-fi-rescue-commands" title="Permanent link">&para;</a></h2>
-<p>These commands are available in the serial rescue CLI for <code>*_companion_radio_wifi</code> builds.</p>
-<p>To enter <code>CLI Rescue</code>:</p>
-<ul>
-<li>open a serial monitor at <code>115200</code> baud</li>
-<li>reboot the device</li>
-<li>long-press the user button within the first 8 seconds after boot</li>
-<li>
-<p>wait for <code>========= CLI Rescue =========</code></p>
-</li>
-<li>
-<p><code>get wifi.status</code>: shows configured SSID, connection status, raw Wi-Fi status code, IP, channel, and signal when connected.</p>
-</li>
-<li><code>get wifi.ssid</code>: shows the configured Wi-Fi SSID.</li>
-<li><code>get wifi.powersaving</code>: shows the current Wi-Fi power saving mode.</li>
-<li><code>set wifi.ssid &lt;ssid&gt;</code>: saves a Wi-Fi SSID and immediately retries connection.</li>
-<li><code>set wifi.pwd &lt;password&gt;</code>: saves a Wi-Fi password and immediately retries connection.</li>
-<li><code>set wifi.powersaving none|min|max</code>: changes the Wi-Fi power save mode.</li>
-</ul>
-<p>Companion Wi-Fi builds also still support the existing rescue commands such as:</p>
-<ul>
-<li><code>set pin &lt;6-digit-pin&gt;</code></li>
-<li><code>rebuild</code></li>
-<li><code>erase</code></li>
-<li><code>ls ...</code></li>
-<li><code>cat ...</code></li>
-<li><code>rm ...</code></li>
-<li><code>reboot</code></li>
-</ul>
-<h3 id="recovery-access-point">Recovery Access Point<a class="headerlink" href="#recovery-access-point" title="Permanent link">&para;</a></h3>
-<p>When a companion Wi-Fi device has no Wi-Fi credentials configured, or cannot connect
-to its configured network for 60 seconds, it broadcasts its own <code>EastMesh-WiFi</code>
-access point so it can be rescued without a serial cable.</p>
-<p><strong>The AP password is the device pin, zero-padded to 8 digits</strong> (WPA2 requires at
-least 8 characters). The pin follows the same rules as the Bluetooth pairing pin on
-BLE builds:</p>
-<table>
-<thead>
-<tr>
-<th>Device</th>
-<th>Active pin</th>
-<th><code>EastMesh-WiFi</code> password</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Has a screen, no pin set</td>
-<td>random 6-digit pin each boot, shown as <code>Pin:NNNNNN</code> on the home screen</td>
-<td><code>00NNNNNN</code> — read it off the screen</td>
-</tr>
-<tr>
-<td>No screen, no pin set</td>
-<td><code>123456</code> (default)</td>
-<td><code>00123456</code></td>
-</tr>
-<tr>
-<td>Pin set via <code>set pin &lt;pin&gt;</code></td>
-<td>your configured pin (any device)</td>
-<td>your pin zero-padded to 8 digits, e.g. pin <code>4242</code> → <code>00004242</code></td>
-</tr>
-</tbody>
-</table>
-<p>Notes on the pin:</p>
-<ul>
-<li>on devices with a screen, the pin is only random while no pin has been saved; run
-  <code>set pin &lt;pin&gt;</code> for a fixed password (takes effect next boot)</li>
-<li>headless devices in public areas should always get a custom pin — <code>00123456</code> is a
-  documented default, so treat it like a default router password</li>
-</ul>
-<p>Recovery steps:</p>
-<ol>
-<li>join the <code>EastMesh-WiFi</code> network with the password from the table above</li>
-<li>open the rescue CLI with <code>telnet 192.168.4.1</code> (or <code>nc 192.168.4.1 23</code>) — all
-   rescue commands above are available</li>
-<li><code>set wifi.ssid &lt;ssid&gt;</code>, then <code>set wifi.pwd &lt;password&gt;</code> — the device immediately
-   retries the network with the new credentials</li>
-<li><code>reboot</code> (or just wait — see below)</li>
-</ol>
-<p>While the AP is up the device keeps retrying its configured network about once a
-minute (expect a brief AP hiccup at each attempt); as soon as the station
-connection succeeds, the recovery AP shuts down automatically (this also drops
-your rescue session — that's the sign it worked).</p>
-<h3 id="using-the-companion-app-over-the-ap-roaming">Using the Companion App over the AP (Roaming)<a class="headerlink" href="#using-the-companion-app-over-the-ap-roaming" title="Permanent link">&para;</a></h3>
-<p>The recovery AP is not just for fixing credentials — the full companion protocol
-is available through it, which makes it a roaming access mode when the device is
-away from its configured network:</p>
-<ol>
-<li>join <code>EastMesh-WiFi</code> with the pin-derived password (see the table above)</li>
-<li>in the MeshCore companion app, add/connect a Wi-Fi device with host
-   <code>192.168.4.1</code> and port <code>5000</code></li>
-<li>use the app normally — messages, contacts, channels all work over the AP</li>
-</ol>
-<p>Notes for roaming use:</p>
-<ul>
-<li>run <code>set pin &lt;pin&gt;</code> once so the AP password stays fixed across reboots;
-  otherwise devices with a screen pick a new random pin every boot</li>
-<li>the AP appears about 60 seconds after boot (the device tries its configured
-  network first), and stays up for as long as that network is unreachable</li>
-<li>back in range of its configured network, the device joins it and shuts the AP
-  down automatically — reconnect the app via the LAN address instead</li>
 </ul>
 <h2 id="heap-health-check-script">Heap Health Check Script<a class="headerlink" href="#heap-health-check-script" title="Permanent link">&para;</a></h2>
 <p><code>eastmesh-tools/web-heap-check.sh &lt;host&gt; [--stress] [--rounds N]</code> reads <code>memory</code>, <code>get web.status</code>, <code>get mqtt.status</code> and <code>get wifi.status</code> over the HTTPS API and, with <code>--stress</code>, simulates browser page-load bursts before re-reading <code>memory</code>. Authenticate with <code>REPEATER_PASSWORD</code> or <code>REPEATER_TOKEN</code> in the environment (or enter the password at the prompt). Watch <code>heap_max</code> (largest internal block; TLS needs ~40KB), <code>heap_min</code>, and the <code>heals</code>/<code>deferred</code>/<code>leaked</code> counters.</p>
