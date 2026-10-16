@@ -490,15 +490,28 @@ releases:
     tag: "observer-eastmesh-v2026.10.0"
     date: "2026-10-16"
     previous_version: "2026.8.3"
-    summary: "Fixes the web panel randomly logging out during active use, and switches the web panel region setup to the newer `region def` command."
+    summary: "Merges upstream MeshCore v1.18.0 into Observer firmware, adopts upstream's T-Beam 1W thermal fan control, and fixes the web panel randomly logging out during active use."
     changes:
+      - type: changed
+        area: upstream
+        text: "Merged upstream MeshCore v1.18.0, including: ACK forwarding in direct mode now uses the normal TX delay instead of none; transport code 0 is treated as unscoped; repeaters with adverts turned off no longer answer DISCOVER requests; `loop.detect` defaults to `minimal` on new installs; `set af` input is validated; and fixes for ESP32 clocks resetting to 1970 after a crash, watchdog or brownout reset."
+      - type: changed
+        area: board
+        text: "Adopted upstream's LilyGo T-Beam 1W thermal fan controller. `get fan` now reports mode, NTC temperature, fan state and TX cooldown; `set fan on|off|auto` is kept; new `set fan.lo <C>` / `set fan.hi <C>` set the auto-mode thresholds (defaults 30C / 36C), and the post-TX cooldown is a fixed 15 seconds. The EastMesh switching of the external LNA off before TX is kept."
+      - type: changed
+        area: radio
+        text: "The ESP32 clock now restores from upstream's RTC-memory backup after a soft reset and falls back to the EastMesh NVS-persisted time after a power loss, so the clock survives both."
+      - type: fixed
+        area: board
+        text: "Ported upstream sensor fixes onto the EastMesh I2C probe path: only one driver instance per sensor type (BMP/BME can be probed at both 0x76 and 0x77), and an I2C address is claimed once a sensor initializes so later entries can't claim the same device."
       - type: fixed
         area: web
         text: "Fixed the web panel session randomly locking and returning to the login page while in use, well before the 15-minute idle timeout. A request arriving while the main loop was checking the idle timer could make the elapsed time wrap around and look expired; activity newer than the check is now treated as active. The same fix applies to the idle check used by web panel self-healing. (#85)"
       - type: changed
         area: web
         text: "The web panel region setup now saves the selected region with a single `region def au <region>` command instead of separate `region put` and `region allowf` commands."
-    breaking_changes: []
+    breaking_changes:
+      - "LilyGo T-Beam 1W: the EastMesh `set fan timeout <Ns>` command has been removed, and fan mode and timeout saved by earlier EastMesh builds are not migrated, so the fan returns to `auto` with the default thresholds after upgrading."
 
   - track: observer-eastmesh-bridge-espnow
     version: "2026.5.1"
@@ -803,13 +816,26 @@ releases:
     tag: "observer-eastmesh-bridge-espnow-v2026.10.0"
     date: "2026-10-16"
     previous_version: "2026.8.3"
-    summary: "Fixes the web panel randomly logging out during active use, and switches the web panel region setup to the newer `region def` command."
+    summary: "Merges upstream MeshCore v1.18.0 into Observer firmware, adopts upstream's T-Beam 1W thermal fan control, and fixes the web panel randomly logging out during active use."
     changes:
+      - type: changed
+        area: upstream
+        text: "Merged upstream MeshCore v1.18.0, including: ACK forwarding in direct mode now uses the normal TX delay instead of none; transport code 0 is treated as unscoped; repeaters with adverts turned off no longer answer DISCOVER requests; `loop.detect` defaults to `minimal` on new installs; `set af` input is validated; and fixes for ESP32 clocks resetting to 1970 after a crash, watchdog or brownout reset."
+      - type: changed
+        area: board
+        text: "Adopted upstream's LilyGo T-Beam 1W thermal fan controller. `get fan` now reports mode, NTC temperature, fan state and TX cooldown; `set fan on|off|auto` is kept; new `set fan.lo <C>` / `set fan.hi <C>` set the auto-mode thresholds (defaults 30C / 36C), and the post-TX cooldown is a fixed 15 seconds. The EastMesh switching of the external LNA off before TX is kept."
+      - type: changed
+        area: radio
+        text: "The ESP32 clock now restores from upstream's RTC-memory backup after a soft reset and falls back to the EastMesh NVS-persisted time after a power loss, so the clock survives both."
+      - type: fixed
+        area: board
+        text: "Ported upstream sensor fixes onto the EastMesh I2C probe path: only one driver instance per sensor type (BMP/BME can be probed at both 0x76 and 0x77), and an I2C address is claimed once a sensor initializes so later entries can't claim the same device."
       - type: fixed
         area: web
         text: "Fixed the web panel session randomly locking and returning to the login page while in use, well before the 15-minute idle timeout. A request arriving while the main loop was checking the idle timer could make the elapsed time wrap around and look expired; activity newer than the check is now treated as active. The same fix applies to the idle check used by web panel self-healing. (#85)"
       - type: changed
         area: web
         text: "The web panel region setup now saves the selected region with a single `region def au <region>` command instead of separate `region put` and `region allowf` commands."
-    breaking_changes: []
+    breaking_changes:
+      - "LilyGo T-Beam 1W: the EastMesh `set fan timeout <Ns>` command has been removed, and fan mode and timeout saved by earlier EastMesh builds are not migrated, so the fan returns to `auto` with the default thresholds after upgrading."
 
