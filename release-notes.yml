@@ -485,6 +485,21 @@ releases:
         text: "Added `eastmesh-tools/web-heap-check.sh` to read heap and service health over the HTTPS API and optionally stress the web panel with browser-style bursts."
     breaking_changes: []
 
+  - track: observer-eastmesh
+    version: "2026.10.0"
+    tag: "observer-eastmesh-v2026.10.0"
+    date: "2026-10-16"
+    previous_version: "2026.8.3"
+    summary: "Fixes the web panel randomly logging out during active use, and switches the web panel region setup to the newer `region def` command."
+    changes:
+      - type: fixed
+        area: web
+        text: "Fixed the web panel session randomly locking and returning to the login page while in use, well before the 15-minute idle timeout. A request arriving while the main loop was checking the idle timer could make the elapsed time wrap around and look expired; activity newer than the check is now treated as active. The same fix applies to the idle check used by web panel self-healing. (#85)"
+      - type: changed
+        area: web
+        text: "The web panel region setup now saves the selected region with a single `region def au <region>` command instead of separate `region put` and `region allowf` commands."
+    breaking_changes: []
+
   - track: observer-eastmesh-bridge-espnow
     version: "2026.5.1"
     tag: "observer-eastmesh-bridge-espnow-v2026.5.1"
@@ -781,5 +796,20 @@ releases:
       - type: added
         area: tools
         text: "Added `eastmesh-tools/web-heap-check.sh` to read heap and service health over the HTTPS API and optionally stress the web panel with browser-style bursts."
+    breaking_changes: []
+
+  - track: observer-eastmesh-bridge-espnow
+    version: "2026.10.0"
+    tag: "observer-eastmesh-bridge-espnow-v2026.10.0"
+    date: "2026-10-16"
+    previous_version: "2026.8.3"
+    summary: "Fixes the web panel randomly logging out during active use, and switches the web panel region setup to the newer `region def` command."
+    changes:
+      - type: fixed
+        area: web
+        text: "Fixed the web panel session randomly locking and returning to the login page while in use, well before the 15-minute idle timeout. A request arriving while the main loop was checking the idle timer could make the elapsed time wrap around and look expired; activity newer than the check is now treated as active. The same fix applies to the idle check used by web panel self-healing. (#85)"
+      - type: changed
+        area: web
+        text: "The web panel region setup now saves the selected region with a single `region def au <region>` command instead of separate `region put` and `region allowf` commands."
     breaking_changes: []
 
