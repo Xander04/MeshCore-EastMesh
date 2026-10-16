@@ -3448,7 +3448,14 @@ bool WebPanelServer::hasSessionToken() const {
 }
 
 bool WebPanelServer::isIdle(unsigned long now_ms, unsigned long quiet_ms) const {
-  return _last_activity_ms == 0 || now_ms - _last_activity_ms >= quiet_ms;
+  const unsigned long last = _last_activity_ms;  // read once; the httpd task may update it
+  if (last == 0) {
+    return true;
+  }
+  if ((long)(now_ms - last) < 0) {  // activity landed after now_ms was sampled
+    return false;
+  }
+  return now_ms - last >= quiet_ms;
 }
 
 bool WebPanelServer::isHeapStarved() {
@@ -3469,10 +3476,14 @@ void WebPanelServer::stopRedirectServer() {
 }
 
 bool WebPanelServer::shouldAutoLock(unsigned long now_ms) const {
-  if (_server == nullptr || _token[0] == 0 || kWebIdleTimeoutMs == 0 || _last_activity_ms == 0) {
+  const unsigned long last = _last_activity_ms;  // read once; the httpd task may update it
+  if (_server == nullptr || _token[0] == 0 || kWebIdleTimeoutMs == 0 || last == 0) {
     return false;
   }
-  return now_ms - _last_activity_ms >= kWebIdleTimeoutMs;
+  if ((long)(now_ms - last) < 0) {  // activity landed after now_ms was sampled
+    return false;
+  }
+  return now_ms - last >= kWebIdleTimeoutMs;
 }
 
 void WebPanelServer::lockSession() {
