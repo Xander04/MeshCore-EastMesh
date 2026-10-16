@@ -8,7 +8,6 @@ EastMesh layer on top of upstream MeshCore.
 Only modify code for clearly scoped EastMesh features:
 
 - `*_repeater_observer`
-- `*_companion_radio_wifi`
 - MQTT uplink/broker
 - repeater web panel
 - docs, releases, automation
@@ -89,8 +88,6 @@ Build a single target:
 ```bash
 uv run pio run -e heltec_v4_repeater_observer
 uv run pio run -e T_Beam_S3_Supreme_SX1262_repeater_observer
-uv run pio run -e heltec_v4_companion_radio_wifi
-uv run pio run -e T_Beam_S3_Supreme_SX1262_companion_radio_wifi
 ```
 
 Build with release-style metadata:
@@ -151,25 +148,15 @@ Operational guidance already reflected in docs:
 - use for initial setup and troubleshooting
 - prefer `set web off` afterward for maximum heap headroom
 
-## Companion WiFi Notes
+## Companion Firmware
 
-`*_companion_radio_wifi` targets support persisted Wi-Fi rescue commands via serial `CLI Rescue`.
-
-Do not document companion rescue commands in repeater docs. Do not assume web-panel behavior applies.
-
-Companion release/version rule:
-
-- companion tags use the official upstream MeshCore release version only
-- the current official MeshCore version is `v1.15.0`
-- companion releases are only cut when `meshcore-dev/MeshCore` has made an official release
-- do not invent separate EastMesh companion version numbers
+EastMesh no longer maintains a companion Wi-Fi track; `examples/companion_radio` follows upstream unchanged. Do not add EastMesh-specific companion features or `companion-wifi` tags.
 
 ## Release Workflow
 
 Current tag formats:
 
 ```bash
-git tag companion-wifi-v1.15.0
 git tag repeater-bridge-espnow-v1.15.0
 git tag observer-eastmesh-bridge-espnow-v2026.5.1
 git tag observer-eastmesh-bridge-mqtt-v2026.7.0
@@ -178,7 +165,6 @@ git tag observer-eastmesh-v2026.5.1
 
 Rules:
 
-- `companion-wifi` tags use the upstream MeshCore version directly
 - `repeater-bridge-espnow` tags use the upstream MeshCore version directly
 - `observer-eastmesh-bridge-espnow` tags use the EastMesh release version in the tag
 - `observer-eastmesh-bridge-mqtt` tags use the EastMesh release version in the tag

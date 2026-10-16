@@ -130,12 +130,6 @@ void halt() {
   char wifi_pwd[64] = WIFI_PWD;
   bool wifi_was_connected = false;
   bool wifi_enabled = false;   // set at boot from prefs; false also when the effective SSID is blank
-  #ifdef EASTMESH_WIFI_RECOVERY_AP
-    unsigned long last_wifi_connected = 0;
-    #ifndef RECOVERY_AP_TIMEOUT_MS
-      #define RECOVERY_AP_TIMEOUT_MS 60000   // STA not connected this long -> recovery AP
-    #endif
-  #endif
 #endif
 
 void setup() {
@@ -206,24 +200,6 @@ void setup() {
   } else {
     the_mesh.setBLEPin(the_mesh.getNodePrefs()->ble_pin);
   }
-#elif defined(EASTMESH_WIFI_RECOVERY_AP)
-  // WiFi builds: the pin doubles as the recovery AP password (zero-padded to 8 digits),
-  // mirroring the BLE pin rules: shown on the display when there is one (random per
-  // session), static default 123456 on headless devices, 'set pin' overrides both.
-  if (the_mesh.getNodePrefs()->ble_pin == 0) {
-#ifdef DISPLAY_CLASS
-    if (disp != NULL) {
-      StdRNG rng;
-      the_mesh.setBLEPin(rng.nextInt(100000, 999999)); // random pin each session
-    } else {
-      the_mesh.setBLEPin(123456);
-    }
-#else
-    the_mesh.setBLEPin(123456);
-#endif
-  } else {
-    the_mesh.setBLEPin(the_mesh.getNodePrefs()->ble_pin);
-  }
 #else
   the_mesh.setBLEPin(0);
 #endif
@@ -243,16 +219,9 @@ void setup() {
   }
   // only start wifi if enabled and ssid is not empty
   wifi_enabled = the_mesh.getNodePrefs()->wifi_enabled;
-#ifdef EASTMESH_WIFI_RECOVERY_AP
-  // EastMesh: start WiFi even without an SSID, so the recovery AP can be used to set one
-  if (wifi_enabled) {
-#else
   if (wifi_enabled && wifi_ssid[0]) {
-#endif
 #if defined(ESP32)
     board.setInhibitSleep(true);   // prevent sleep when WiFi is active
-    WiFi.mode(WIFI_STA);
-    WiFi.setSleep(static_cast<wifi_ps_type_t>(the_mesh.getWifiPowerSaveMode()));
     WiFi.setAutoReconnect(true);
 
     WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info){
@@ -276,9 +245,7 @@ void setup() {
     WiFi.beginNoBlock(wifi_ssid, wifi_pwd);
     last_wifi_reconnect_attempt = millis();   // let DHCP finish before the poll can retry
 #else
-    if (wifi_ssid[0]) {
-      WiFi.begin(wifi_ssid, wifi_pwd);
-    }
+    WiFi.begin(wifi_ssid, wifi_pwd);
 #endif
     wifi_interface.begin(TCP_PORT);
     interface_manager.addInterface(InterfaceType::WiFi, &wifi_interface);
@@ -358,15 +325,7 @@ void loop() {
 
     // Safely attempt to reconnect if flagged. On RP2040 each attempt blocks the mesh loop
     // for up to WIFI_RETRY_TIMEOUT, so retry less often and cap how long a join may stall.
-  #ifdef EASTMESH_WIFI_RECOVERY_AP
-    // Skipped while the recovery AP is up: constant STA rescans drag the AP's radio
-    // across channels and break joining clients' WPA2 handshakes; loopRecoveryAP()
-    // owns the (slower) STA retry cadence in that state.
-    if (!the_mesh.isRecoveryAPActive() &&
-        wifi_needs_reconnect && (millis() - last_wifi_reconnect_attempt > WIFI_RETRY_INTERVAL)) {
-  #else
     if (wifi_needs_reconnect && (millis() - last_wifi_reconnect_attempt > WIFI_RETRY_INTERVAL)) {
-  #endif
       WIFI_DEBUG_PRINTLN("Attempting manual WiFi reconnect to %s (status %d)...", wifi_ssid, WiFi.status());
     #if defined(RP2040_PLATFORM)
         WiFi.setTimeout(WIFI_RETRY_TIMEOUT);
@@ -378,23 +337,5 @@ void loop() {
       last_wifi_reconnect_attempt = millis();
     }
   }
-
-#ifdef EASTMESH_WIFI_RECOVERY_AP
-  // Recovery AP: broadcast our own SSID (with the rescue CLI on TCP) when STA has no
-  // credentials or hasn't been able to connect, so wifi.ssid/pwd can be fixed in place
-  if (wifi_enabled) {
-    if (the_mesh.isRecoveryAPActive()) {
-      the_mesh.loopRecoveryAP();
-      if (WiFi.status() == WL_CONNECTED) {
-        the_mesh.stopRecoveryAP();   // STA is up again; back to normal operation
-      }
-    } else if (WiFi.status() == WL_CONNECTED) {
-      last_wifi_connected = millis();
-    } else if (the_mesh.getNodePrefs()->getWifiSSID()[0] == 0 ||
-               millis() - last_wifi_connected > RECOVERY_AP_TIMEOUT_MS) {
-      the_mesh.startRecoveryAP();
-    }
-  }
-#endif
 #endif
 }

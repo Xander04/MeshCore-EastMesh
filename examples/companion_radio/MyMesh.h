@@ -25,14 +25,6 @@
 #include "DataStore.h"
 #include "NodePrefs.h"
 
-#if defined(ESP32) && defined(ENABLE_WIFI_INTERFACE)
-#include <WiFi.h>
-  #if !defined(BLE_PIN_CODE)
-    // EastMesh: WiFi-only companion builds get the recovery AP + TCP rescue CLI
-    #define EASTMESH_WIFI_RECOVERY_AP
-  #endif
-#endif
-
 #include <RTClib.h>
 #include <helpers/ArduinoHelpers.h>
 #include <helpers/BaseSerialInterface.h>
@@ -126,16 +118,6 @@ public:
   NodePrefs *getNodePrefs();
   uint32_t getBLEPin();
   void setBLEPin(uint32_t active_pin);
-#if defined(ESP32) && defined(ENABLE_WIFI_INTERFACE)
-  uint8_t getWifiPowerSaveMode() const { return _prefs.wifi_powersave; }
-#endif
-#ifdef EASTMESH_WIFI_RECOVERY_AP
-  // recovery AP: broadcast our own SSID (with rescue CLI on TCP) while STA can't connect
-  void startRecoveryAP();
-  void stopRecoveryAP();
-  void loopRecoveryAP();
-  bool isRecoveryAPActive() const { return _recovery_ap_active; }
-#endif
 
   void loop();
   void handleCmdFrame(size_t len);
@@ -250,13 +232,8 @@ private:
 
   void checkCLIRescueCmd();
   bool handleCommand(const char* text, uint32_t sender_timestamp, char* reply);
-  void handleRescueCommand(char* command, Stream& out);
   void checkSerialInterface();
   bool isValidClientRepeatFreq(uint32_t f) const;
-#if defined(ESP32) && defined(ENABLE_WIFI_INTERFACE)
-  void applyStationMode();
-  void applyWifiCredentials();
-#endif
 
   // helpers, short-cuts
   void saveChannels() { _store->saveChannels(this); }
@@ -280,13 +257,6 @@ private:
   bool send_unscoped;   // force un-scoped flood (instead of using send_scope)
   char cli_command[80];
   char reply_buf[166];
-#ifdef EASTMESH_WIFI_RECOVERY_AP
-  bool _recovery_ap_active = false;
-  WiFiServer* _rescue_server = NULL;
-  WiFiClient _rescue_client;
-  char rescue_cmd[80];
-  unsigned long _next_sta_retry = 0;
-#endif
   uint8_t app_target_ver;
   uint8_t *sign_data;
   uint32_t sign_data_len;

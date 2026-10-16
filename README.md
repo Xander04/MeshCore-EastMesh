@@ -6,7 +6,7 @@ MeshCore-EastMesh originates from the upstream MeshCore project:
 
 Credits to Scott Powell / Ripple Radios and the MeshCore contributors for the original firmware and project foundation.
 
-EastMesh is a community-driven mesh network across Eastern Australia. This repository provides tailored builds of MeshCore, including WiFi companion firmware with additional CLI tools and Observer firmware that integrates with our CoreScope telemetry platform.
+EastMesh is a community-driven mesh network across Eastern Australia. This repository provides tailored builds of MeshCore, including Observer firmware that integrates with our CoreScope telemetry platform.
 
 CoreScope (<https://core.eastmesh.au>) offers visibility into the network, including repeater status, observers, and mapping data.
 
@@ -20,9 +20,10 @@ CoreScope (<https://core.eastmesh.au>) offers visibility into the network, inclu
   - optional local HTTPS config panel on supported ESP32 targets
 - `*_repeater_observer_espnow` firmware targets that add a local ESP-NOW mesh bridge
 - `*_repeater_bridge_espnow` firmware targets for a plain upstream-style repeater ESP-NOW bridge, without MQTT uplink or the EastMesh web panel
-- `*_companion_radio_wifi` firmware targets for WiFi-connected companion devices
 - EastMesh-specific release workflows and versioning on top of upstream MeshCore releases
 - docs and release guidance for EastMesh users instead of the full upstream MeshCore docs set
+
+For Wi-Fi companion devices, use the official upstream MeshCore `*_companion_radio_wifi` firmware, which now includes persisted Wi-Fi settings natively. EastMesh no longer publishes a separate companion Wi-Fi release.
 
 ## Releases
 
@@ -84,7 +85,6 @@ Build a single target:
 
 ```bash
 uv run pio run -e heltec_v4_repeater_observer
-uv run pio run -e heltec_v4_companion_radio_wifi
 ```
 
 Build with release-style version metadata:
@@ -133,8 +133,6 @@ uv run --group docs zensical build
   - bidirectional MQTT mesh bridge (peer broker TCP, topic `meshcore/bridge/packets`)
 - [`src/helpers/mqtt/MQTTUplink.cpp`](./src/helpers/mqtt/MQTTUplink.cpp)
   - MQTT uplink implementation, HTTPS web panel, WSS/JWT handling, and repeater WiFi control
-- [`examples/companion_radio`](./examples/companion_radio)
-  - companion firmware implementation
 - [`RELEASE.md`](./RELEASE.md)
   - tag formats and release workflow behavior
 - [`eastmesh-docs/`](./eastmesh-docs)
@@ -292,28 +290,8 @@ Features include:
 
 Recommended use is initial setup and occasional troubleshooting. On observer deployments, disable the panel again when finished if you want maximum MQTT heap headroom.
 
-### Companion WiFi Additions
-
-`*_companion_radio_wifi` targets now support persisted WiFi rescue commands:
-
-- open a serial monitor at `115200` baud
-- reboot the device
-- long-press the user button within the first 8 seconds after boot to enter `CLI Rescue`
-- wait for `========= CLI Rescue =========`
-- send the commands from the serial monitor
-
-These rescue commands are only available after entering `CLI Rescue`:
-
-- `get wifi.status`
-- `get wifi.ssid`
-- `get wifi.powersaving`
-- `set wifi.ssid <ssid>`
-- `set wifi.pwd <password>`
-- `set wifi.powersaving none|min|max`
-
 ## Active GitHub Workflows
 
-- `.github/workflows/eastmesh-build-companion-wifi-firmwares.yml`
 - `.github/workflows/eastmesh-build-observer-firmwares.yml`
 - `.github/workflows/eastmesh-build-repeater-bridge-espnow-firmwares.yml`
 - `.github/workflows/eastmesh-build-observer-espnow-firmwares.yml`
@@ -326,7 +304,6 @@ The upstream MeshCore workflows are retained under their original filenames to r
 
 The current release workflows intentionally focus only on:
 
-- `companion-wifi`
 - `repeater-bridge-espnow`
 - `observer-eastmesh`
 - `observer-eastmesh-bridge-espnow`
@@ -337,14 +314,13 @@ The current release workflows intentionally focus only on:
 Current release tags are:
 
 ```bash
-git tag companion-wifi-v1.14.1
 git tag repeater-bridge-espnow-v1.15.0
 git tag observer-eastmesh-v2026.5.1
 git tag observer-eastmesh-bridge-espnow-v2026.5.1
 git tag observer-eastmesh-bridge-mqtt-v2026.7.0
 ```
 
-Companion WiFi uses the upstream MeshCore version in the tag.
+Repeater ESP-NOW bridge uses the upstream MeshCore version in the tag.
 
 Observer uses:
 

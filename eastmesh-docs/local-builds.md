@@ -26,7 +26,6 @@ Plain PlatformIO build for a single target:
 
 ```bash
 uv run pio run -e heltec_v4_repeater_observer
-uv run pio run -e heltec_v4_companion_radio_wifi
 uv run pio run -e heltec_v4_repeater_bridge_espnow
 uv run pio run -e heltec_v4_repeater_observer_espnow
 uv run pio run -e Xiao_S3_WIO_repeater_observer_mqtt_bridge
@@ -47,13 +46,6 @@ uv run pio device monitor --port /dev/tty.usbmodemXXXX --baud 115200
 ## Release-Style Local Builds
 
 If you want the same version metadata used by the release workflows, export the version variables first.
-
-Companion Wi-Fi:
-
-```bash
-export FIRMWARE_VERSION=v1.14.1
-bash eastmesh-build.sh build-firmware heltec_v4_companion_radio_wifi
-```
 
 Observer:
 
@@ -82,7 +74,7 @@ This produces versioned artifacts in `out/`.
 
 Versioning rule:
 
-- `companion-wifi` and `repeater-bridge-espnow` use the upstream MeshCore version as `FIRMWARE_VERSION`
+- `repeater-bridge-espnow` uses the upstream MeshCore version as `FIRMWARE_VERSION`
 - `observer-eastmesh`, `observer-eastmesh-bridge-espnow`, and `observer-eastmesh-bridge-mqtt` use the upstream MeshCore version as `FIRMWARE_VERSION` plus the EastMesh release version as `EASTMESH_VERSION`
 
 ## Supported `repeater_observer` Boards
@@ -156,45 +148,3 @@ bash eastmesh-build.sh list | grep '_repeater_observer_mqtt_bridge'
 ```
 
 Bridge firmware is for local ESP-NOW bridge use between nearby repeaters. It is not MQTT-over-WAN or VPN bridging.
-
-## Supported `companion_radio_wifi` Boards
-
-These are the full PlatformIO env names used for local source builds and release artifact naming.
-
-```text
-heltec_tracker_v2_companion_radio_wifi
-Heltec_v2_companion_radio_wifi
-Heltec_v3_companion_radio_wifi
-heltec_v4_companion_radio_wifi
-heltec_v4_tft_companion_radio_wifi
-Heltec_WSL3_companion_radio_wifi
-LilyGo_TBeam_1W_companion_radio_wifi
-LilyGo_TLora_V2_1_1_6_companion_radio_wifi
-nibble_screen_connect_companion_radio_wifi
-RAK_3112_companion_radio_wifi
-Station_G2_companion_radio_wifi
-T_Beam_S3_Supreme_SX1262_companion_radio_wifi
-ThinkNode_M2_companion_radio_wifi
-ThinkNode_M5_companion_radio_wifi
-Xiao_S3_LoRa2021F33-2G4_companion_radio_wifi
-Xiao_S3_WIO_companion_radio_wifi
-```
-
-## Companion Wi-Fi CLI
-
-Current companion Wi-Fi builds support persisted Wi-Fi rescue commands:
-
-- open a serial monitor at `115200` baud
-- reboot the device
-- long-press the user button within the first 8 seconds after boot to enter `CLI Rescue`
-- wait for `========= CLI Rescue =========`
-- then run the Wi-Fi rescue commands below from the serial monitor
-
-```text
-get wifi.status
-get wifi.ssid
-get wifi.powersaving
-set wifi.ssid <ssid>
-set wifi.pwd <password>
-set wifi.powersaving none|min|max
-```

@@ -1278,8 +1278,7 @@ const char kWebPanelAppHtml[] PROGMEM = R"HTML(
         { suffix:"_repeater_observer_mqtt_bridge", firmware:"repeater_observer_mqtt_bridge" },
         { suffix:"_repeater_observer_espnow", firmware:"repeater_observer_espnow" },
         { suffix:"_repeater_observer", firmware:"repeater_observer" },
-        { suffix:"_repeater_bridge_espnow", firmware:"repeater_bridge_espnow" },
-        { suffix:"_companion_radio_wifi", firmware:"companion_wifi" }
+        { suffix:"_repeater_bridge_espnow", firmware:"repeater_bridge_espnow" }
       ];
       for (const item of suffixes) {
         if (env.endsWith(item.suffix)) {
