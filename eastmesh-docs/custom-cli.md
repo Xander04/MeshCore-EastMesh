@@ -198,28 +198,26 @@ Observer builds default `flood.max.unscoped` to `64`. Lower values can limit how
 
 ### T-Beam 1W Fan Control
 
-These commands are only available on `LilyGo_TBeam_1W_*` repeater builds.
+These commands come from upstream MeshCore and are available on `LilyGo_TBeam_1W_*` builds (repeater, room server, and companion CLI).
 
-- `get fan`: shows the current fan mode, current fan state, and the last NTC-based board temperature when available.
-- `set fan auto`: returns the fan to automatic control and persists that mode across reboot.
+- `get fan`: shows the fan mode, last NTC board temperature, fan state, and remaining TX cooldown, for example `> auto 34.5C fan=on cd=12s`.
+- `set fan auto`: thermal control with hysteresis plus a post-TX cooldown; persists across reboot.
 - `set fan on`: forces the fan on and persists that mode across reboot.
 - `set fan off`: forces the fan off and persists that mode across reboot.
-- `set fan timeout <Ns>`: changes the automatic post-TX hold window in seconds and persists it across reboot, for example `set fan timeout 45s`.
+- `set fan.lo <C>`: auto mode turns the fan off below this temperature (`0`-`100`, must be below `fan.hi`).
+- `set fan.hi <C>`: auto mode turns the fan on at or above this temperature (must be above `fan.lo`, max `120`).
 
 Auto mode behaviour:
 
-- forces the fan on during TX and keeps it on for the configured timeout afterward
-- otherwise turns the fan on at `48C`
-- turns it back off at `42C`
-- keeps the fan on if the NTC reading is unavailable
+- turns the fan on during TX and keeps it on for `15s` afterward
+- otherwise turns the fan on at `fan.hi` (default `36C`) and off below `fan.lo` (default `30C`)
+- keeps the fan on if the NTC reading is unavailable or implausible
 
 Notes:
 
-- default repeater fan mode is `auto`
-- default post-TX timeout is `30s`
-- fan mode and timeout are stored in repeater prefs and survive reboot
-- only `LilyGo_TBeam_1W_*` repeater builds use these persisted fan settings
-- accepted range is `0s` to `600s`
+- default fan mode is `auto`
+- the earlier EastMesh `set fan timeout <Ns>` command has been removed; the post-TX cooldown is now fixed
+- fan settings saved by older EastMesh builds are not migrated, so the fan returns to `auto` with the default thresholds after upgrading
 
 ## Web Panel CLI Access
 
@@ -253,6 +251,15 @@ To enter `CLI Rescue`:
 - `set wifi.ssid <ssid>`: saves a Wi-Fi SSID and immediately retries connection.
 - `set wifi.pwd <password>`: saves a Wi-Fi password and immediately retries connection.
 - `set wifi.powersaving none|min|max`: changes the Wi-Fi power save mode.
+
+Upstream MeshCore Wi-Fi commands, also available:
+
+- `get wifi.ip`: shows the current IP address, or `(not connected)`.
+- `get wifi.pwd`: shows the stored Wi-Fi password.
+- `get wifi.enabled` / `set wifi.enabled 0|1`: turns the Wi-Fi interface off or on (applies after reboot). Turning it off also disables the recovery access point.
+- `set wifi.clear`: clears the stored SSID and password (applies after reboot).
+
+The same Wi-Fi commands can also be sent from the companion app's CLI.
 
 Companion Wi-Fi builds also still support the existing rescue commands such as:
 
