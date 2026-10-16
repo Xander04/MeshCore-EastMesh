@@ -18,15 +18,14 @@ If this is your first time flashing EastMesh firmware, the easiest path is:
 6. Click `Flash Firmware`.
 7. After flashing, finish setup with `Open MeshCore Config Panel` or the `Serial Console`.
 
-If you are not sure which track you need, start with `companion-wifi` for app-connected companion devices or `observer-eastmesh` for a fixed repeater that should publish to MQTT.
+If you are not sure which track you need, start with `observer-eastmesh` for a fixed repeater that should publish to MQTT. For Wi-Fi companion devices, use the official upstream MeshCore `*_companion_radio_wifi` firmware instead; EastMesh no longer publishes a companion Wi-Fi track.
 
 ## Pick Your Track
 
-EastMesh publishes four release tracks:
+EastMesh publishes these release tracks:
 
 | Track                             | Use it when                                                                                                   | Firmware filename suffix     |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------- | ---------------------------- |
-| `companion-wifi`                  | You want a companion device that connects over Wi-Fi instead of BLE or USB.                                   | `*_companion_radio_wifi`     |
 | `observer-eastmesh`               | You want a repeater with Wi-Fi and MQTT uplink, usually feeding broker visibility such as EastMesh/CoreScope. | `*_repeater_observer`        |
 | `repeater-bridge-espnow`          | You want a local ESP-NOW bridge between nearby repeaters, without MQTT uplink or the EastMesh web panel.      | `*_repeater_bridge_espnow`   |
 | `observer-eastmesh-bridge-espnow` | You want one repeater to provide both MQTT uplink and local ESP-NOW bridge duties.                            | `*_repeater_observer_espnow` |
@@ -43,7 +42,6 @@ Download the asset that matches your board and firmware type.
 
 Examples:
 
-- `heltec_v4_companion_radio_wifi-v1.14.1-abcdef.bin`
 - `heltec_v4_repeater_observer-v1.15.0-eastmesh-v2026.5.1-abcdef.bin`
 - `heltec_v4_repeater_observer-v1.15.0-eastmesh-v2026.5.1-abcdef-merged.bin`
 - `heltec_v4_repeater_bridge_espnow-v1.15.0-abcdef.bin`
@@ -51,7 +49,6 @@ Examples:
 
 The important part is the board/env prefix:
 
-- `*_companion_radio_wifi`
 - `*_repeater_observer`
 - `*_repeater_bridge_espnow`
 - `*_repeater_observer_espnow`
@@ -91,7 +88,6 @@ The recommended flasher is:
 
 It includes native support for the common EastMesh firmware types and can also flash custom firmware files:
 
-- `companion_radio_wifi` firmware
 - `repeater_observer` firmware
 - custom firmware files
 
@@ -139,7 +135,6 @@ It is especially useful, and often required, for initial Wi-Fi setup on Wi-Fi-ca
 
 This applies to:
 
-- `companion_radio_wifi`
 - `repeater_observer`
 - `repeater_observer_espnow`
 
@@ -197,13 +192,3 @@ Typical first steps after flashing:
 - set the intended MeshCore radio preset/config
 - set the same bridge channel and secret on the local bridge pair
 - confirm both bridge repeaters are physically nearby enough for ESP-NOW to work
-
-### Companion Wi-Fi
-
-`companion_radio_wifi` builds are for companion devices that expose the app interface over Wi-Fi instead of BLE or USB.
-
-Typical first steps after flashing:
-
-- set Wi-Fi credentials
-- confirm `get wifi.status`
-- connect your client app to the companion over Wi-Fi

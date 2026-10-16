@@ -4,14 +4,7 @@ This page is meant to help you choose a board, not just list every technical det
 
 ## Start Here
 
-If you are new to MeshCore hardware and just want a sensible starting point, first decide whether the device is a companion or a repeater.
-
-For companions, think Wi-Fi-connected automation endpoint:
-
-- use companion Wi-Fi builds when another system, such as Home Assistant, RemoteTerm, or your own tooling, needs to connect to MeshCore over Wi-Fi
-- these are usually not hands-on daily devices, so a screen is optional rather than a must-have
-- headless or simple boards are often fine when the companion will sit near power and be managed from another app or automation system
-- check the companion tables below when you do want a display, GPS, or a more complete board package
+If you are new to MeshCore hardware and just want a sensible starting point, this page covers the EastMesh repeater tracks. For Wi-Fi companion devices, use the official upstream MeshCore `*_companion_radio_wifi` firmware; EastMesh no longer publishes a companion Wi-Fi track.
 
 For MQTT/web repeaters, think Wi-Fi, broker visibility, and enough headroom for the local web panel:
 
@@ -30,7 +23,7 @@ For bridge repeaters, think local radio linking between nearby repeaters:
 
 Other notes:
 
-- screens matter more for companions or bench/field devices than fixed repeaters
+- screens matter more for bench/field devices than fixed repeaters
 - if you do want an onboard screen people will actually use, prefer TFT boards
 - if you want a low-power status screen, prefer e-paper boards
 - if location-aware or mobile use matters, prefer GPS-capable boards such as the T-Beam family, `heltec_tracker_v2`, `Heltec_v3`, `heltec_v4`, or `ThinkNode_M5`
@@ -49,7 +42,6 @@ The tables below are built from the repo's PlatformIO board metadata and variant
 
 ## Track Notes
 
-- `companion-wifi` boards are for app-connected companion devices.
 - `observer-eastmesh` boards are for Wi-Fi repeaters that publish to MQTT.
 - `repeater-bridge-espnow` and `observer-eastmesh-bridge-espnow` boards are for local ESP-NOW bridge use between nearby repeaters on different MeshCore radio configs.
 
@@ -155,42 +147,8 @@ SD notes:
 - `🧪` means the board hardware likely supports TF/microSD, but the EastMesh board-specific integration still needs validation before it should be treated as supported.
 - For the current stats archive, a `4 GB` `FAT32` microSD card is more than sufficient. Larger cards are also supported.
 
-## `companion_radio_wifi` Boards With A Display
-
-These are the Wi-Fi companion targets that have a display configured for local status, setup help, or occasional direct interaction.
-
-| Target                   | MCU     | RAM    | PSRAM | Flash | LoRa   | Display         | GPS |
-| ------------------------ | ------- | ------ | ----- | ----- | ------ | --------------- | --- |
-| Heltec_v2                | ESP32   | 520 KB | No    | 8 MB  | SX1276 | OLED (SSD1306)  |     |
-| Heltec_v3                | ESP32S3 | 512 KB | No    | 8 MB  | SX1262 | OLED (SSD1306)  | ✅  |
-| heltec_tracker_v2        | ESP32S3 | 512 KB | No    | 8MB   | SX1262 | TFT (ST7735)    | ✅  |
-| heltec_v4                | ESP32S3 | 512 KB | 2 MB  | 16MB  | SX1262 | OLED (SSD1306)  | ✅  |
-| heltec_v4_tft            | ESP32S3 | 512 KB | 2 MB  | 16MB  | SX1262 | TFT (ST7789)    | ✅  |
-| LilyGo_TBeam_1W          | ESP32S3 | 512 KB | 8 MB  | 16MB  | SX1262 | OLED (SH1106)   | ✅  |
-| LilyGo_TLora_V2_1_1_6    | ESP32   | 520 KB | No    | 4 MB  | SX1276 | OLED (SSD1306)  | ✅  |
-| nibble_screen_connect    | ESP32S3 | 512 KB | No    | 4MB   | SX1262 | OLED (SSD1306)  |     |
-| Station_G2               | ESP32S3 | 512 KB | 8 MB  | 16MB  | SX1262 | OLED (SH1106)   | ✅  |
-| T_Beam_S3_Supreme_SX1262 | ESP32S3 | 512 KB | 8 MB  | 8MB   | SX1262 | OLED (SH1106)   | ✅  |
-| ThinkNode_M2             | ESP32S3 | 512 KB | No    | 4MB   | SX1262 | OLED (SH1106)   |     |
-| ThinkNode_M5             | ESP32S3 | 512 KB | No    | 4MB   | SX1262 | E-paper (GxEPD) | ✅  |
-
-## `companion_radio_wifi` Headless Boards
-
-These are the Wi-Fi companion targets that rely on the companion app as the primary interface. For many users, this is the best everyday option.
-
-| Target                  | MCU     | RAM    | PSRAM | Flash | LoRa   | GPS |
-| ----------------------- | ------- | ------ | ----- | ----- | ------ | --- |
-| Heltec_WSL3             | ESP32S3 | 512 KB | No    | 8 MB  | SX1262 | ✅  |
-| RAK_3112                | ESP32S3 | 512 KB | No    | 8 MB  | SX1262 | ✅  |
-| Xiao_S3_LoRa2021F33-2G4 | ESP32S3 | 512 KB | No    | 8 MB  | LR2021 |     |
-| Xiao_S3_WIO             | ESP32S3 | 512 KB | No    | 8 MB  | SX1262 | ✅  |
-
 ## Practical Picks
 
 - Best all-round observer with screen and overall headroom: `heltec_v4_repeater_observer`, `heltec_v4_tft_repeater_observer`, `Station_G2_repeater_observer`, `LilyGo_TBeam_1W_repeater_observer`.
 - Best observer if you want a simple headless install: `RAK_3112_repeater_observer`, `Generic_E22_sx1262_repeater_observer`, `Meshimi_repeater_observer`, `Xiao_C6_repeater_observer`.
 - Best low-power display observer builds: `Heltec_E213_repeater_observer`, `Heltec_E290_repeater_observer`, `Heltec_Wireless_Paper_repeater_observer`, `ThinkNode_M5_Repeater_observer`.
-- Best companion choices if you want the richest local UI: `heltec_v4_tft_companion_radio_wifi` and `heltec_tracker_v2_companion_radio_wifi`.
-- Best companion choices if you want maximum memory headroom: `T_Beam_S3_Supreme_SX1262_companion_radio_wifi`, `Station_G2_companion_radio_wifi`, `LilyGo_TBeam_1W_companion_radio_wifi`.
-- Best companion choices if you are happy with an app-first, mostly headless setup: `RAK_3112_companion_radio_wifi`, `Xiao_S3_WIO_companion_radio_wifi`, `Station_G2_companion_radio_wifi`.
-- Best companion choices if you prefer OLED over TFT: `T_Beam_S3_Supreme_SX1262_companion_radio_wifi`, `heltec_v4_companion_radio_wifi`, `LilyGo_TBeam_1W_companion_radio_wifi`.

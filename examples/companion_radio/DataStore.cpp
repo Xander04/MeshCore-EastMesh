@@ -236,37 +236,8 @@ void DataStore::loadPrefsInt(const char *filename, NodePrefs& _prefs) {
     file.read((uint8_t *)&_prefs.autoadd_config, sizeof(_prefs.autoadd_config));           // 87
     file.read((uint8_t *)&_prefs.autoadd_max_hops, sizeof(_prefs.autoadd_max_hops));       // 88
     file.read((uint8_t *)&_prefs.rx_boosted_gain, sizeof(_prefs.rx_boosted_gain));         // 89
-
-    const int wifi_bytes = sizeof(_prefs.wifi_powersave) + sizeof(_prefs.wifi_ssid) + sizeof(_prefs.wifi_pwd);
-    const int scope_bytes = sizeof(_prefs.default_scope_name) + sizeof(_prefs.default_scope_key);
-    const int remaining = file.available();
-
-    if (remaining >= wifi_bytes + scope_bytes) {
-      file.read((uint8_t *)&_prefs.wifi_powersave, sizeof(_prefs.wifi_powersave));         // 90
-      file.read((uint8_t *)_prefs.wifi_ssid, sizeof(_prefs.wifi_ssid));                    // 91
-      _prefs.wifi_ssid[sizeof(_prefs.wifi_ssid) - 1] = 0;
-      file.read((uint8_t *)_prefs.wifi_pwd, sizeof(_prefs.wifi_pwd));                      // 124
-      _prefs.wifi_pwd[sizeof(_prefs.wifi_pwd) - 1] = 0;
-      file.read((uint8_t *)_prefs.default_scope_name, sizeof(_prefs.default_scope_name));  // 189
-      _prefs.default_scope_name[sizeof(_prefs.default_scope_name) - 1] = 0;
-      file.read((uint8_t *)_prefs.default_scope_key, sizeof(_prefs.default_scope_key));    // 220
-    } else if (remaining >= scope_bytes) {
-      file.read((uint8_t *)_prefs.default_scope_name, sizeof(_prefs.default_scope_name));  // 90
-      _prefs.default_scope_name[sizeof(_prefs.default_scope_name) - 1] = 0;
-      file.read((uint8_t *)_prefs.default_scope_key, sizeof(_prefs.default_scope_key));    // 121
-    } else {
-      if (file.available() >= (int)sizeof(_prefs.wifi_powersave)) {
-        file.read((uint8_t *)&_prefs.wifi_powersave, sizeof(_prefs.wifi_powersave));       // 90
-      }
-      if (file.available() >= (int)sizeof(_prefs.wifi_ssid)) {
-        file.read((uint8_t *)_prefs.wifi_ssid, sizeof(_prefs.wifi_ssid));                  // 91
-        _prefs.wifi_ssid[sizeof(_prefs.wifi_ssid) - 1] = 0;
-      }
-      if (file.available() >= (int)sizeof(_prefs.wifi_pwd)) {
-        file.read((uint8_t *)_prefs.wifi_pwd, sizeof(_prefs.wifi_pwd));                    // 124
-        _prefs.wifi_pwd[sizeof(_prefs.wifi_pwd) - 1] = 0;
-      }
-    }
+    file.read((uint8_t *)_prefs.default_scope_name, sizeof(_prefs.default_scope_name));    // 90
+    file.read((uint8_t *)_prefs.default_scope_key, sizeof(_prefs.default_scope_key));     // 121
 
     // migrate old fields
     _prefs.setRepeatEn(_prefs._client_repeat != 0);

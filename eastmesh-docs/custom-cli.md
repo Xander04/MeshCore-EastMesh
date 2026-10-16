@@ -198,28 +198,26 @@ Observer builds default `flood.max.unscoped` to `64`. Lower values can limit how
 
 ### T-Beam 1W Fan Control
 
-These commands are only available on `LilyGo_TBeam_1W_*` repeater builds.
+These commands come from upstream MeshCore and are available on `LilyGo_TBeam_1W_*` builds (repeater, room server, and companion CLI).
 
-- `get fan`: shows the current fan mode, current fan state, and the last NTC-based board temperature when available.
-- `set fan auto`: returns the fan to automatic control and persists that mode across reboot.
+- `get fan`: shows the fan mode, last NTC board temperature, fan state, and remaining TX cooldown, for example `> auto 34.5C fan=on cd=12s`.
+- `set fan auto`: thermal control with hysteresis plus a post-TX cooldown; persists across reboot.
 - `set fan on`: forces the fan on and persists that mode across reboot.
 - `set fan off`: forces the fan off and persists that mode across reboot.
-- `set fan timeout <Ns>`: changes the automatic post-TX hold window in seconds and persists it across reboot, for example `set fan timeout 45s`.
+- `set fan.lo <C>`: auto mode turns the fan off below this temperature (`0`-`100`, must be below `fan.hi`).
+- `set fan.hi <C>`: auto mode turns the fan on at or above this temperature (must be above `fan.lo`, max `120`).
 
 Auto mode behaviour:
 
-- forces the fan on during TX and keeps it on for the configured timeout afterward
-- otherwise turns the fan on at `48C`
-- turns it back off at `42C`
-- keeps the fan on if the NTC reading is unavailable
+- turns the fan on during TX and keeps it on for `15s` afterward
+- otherwise turns the fan on at `fan.hi` (default `36C`) and off below `fan.lo` (default `30C`)
+- keeps the fan on if the NTC reading is unavailable or implausible
 
 Notes:
 
-- default repeater fan mode is `auto`
-- default post-TX timeout is `30s`
-- fan mode and timeout are stored in repeater prefs and survive reboot
-- only `LilyGo_TBeam_1W_*` repeater builds use these persisted fan settings
-- accepted range is `0s` to `600s`
+- default fan mode is `auto`
+- the earlier EastMesh `set fan timeout <Ns>` command has been removed; the post-TX cooldown is now fixed
+- fan settings saved by older EastMesh builds are not migrated, so the fan returns to `auto` with the default thresholds after upgrading
 
 ## Web Panel CLI Access
 
@@ -235,91 +233,6 @@ Notes:
 - the web `Purge SD` button runs `purge sd` after browser confirmation
 - `start ota` uses the repeater's existing Wi-Fi address when already connected, or starts the `MeshCore-OTA` access point when Wi-Fi is not connected
 - the `/app` Regions shortcut runs the existing MeshCore region commands in sequence: `region put au`, `region put au-STATE`, `region allowf au`, `region allowf au-STATE`, then `region save`
-
-## Companion Wi-Fi Rescue Commands
-
-These commands are available in the serial rescue CLI for `*_companion_radio_wifi` builds.
-
-To enter `CLI Rescue`:
-
-- open a serial monitor at `115200` baud
-- reboot the device
-- long-press the user button within the first 8 seconds after boot
-- wait for `========= CLI Rescue =========`
-
-- `get wifi.status`: shows configured SSID, connection status, raw Wi-Fi status code, IP, channel, and signal when connected.
-- `get wifi.ssid`: shows the configured Wi-Fi SSID.
-- `get wifi.powersaving`: shows the current Wi-Fi power saving mode.
-- `set wifi.ssid <ssid>`: saves a Wi-Fi SSID and immediately retries connection.
-- `set wifi.pwd <password>`: saves a Wi-Fi password and immediately retries connection.
-- `set wifi.powersaving none|min|max`: changes the Wi-Fi power save mode.
-
-Companion Wi-Fi builds also still support the existing rescue commands such as:
-
-- `set pin <6-digit-pin>`
-- `rebuild`
-- `erase`
-- `ls ...`
-- `cat ...`
-- `rm ...`
-- `reboot`
-
-### Recovery Access Point
-
-When a companion Wi-Fi device has no Wi-Fi credentials configured, or cannot connect
-to its configured network for 60 seconds, it broadcasts its own `EastMesh-WiFi`
-access point so it can be rescued without a serial cable.
-
-**The AP password is the device pin, zero-padded to 8 digits** (WPA2 requires at
-least 8 characters). The pin follows the same rules as the Bluetooth pairing pin on
-BLE builds:
-
-| Device                      | Active pin                                                             | `EastMesh-WiFi` password                                       |
-| --------------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------- |
-| Has a screen, no pin set    | random 6-digit pin each boot, shown as `Pin:NNNNNN` on the home screen | `00NNNNNN` — read it off the screen                            |
-| No screen, no pin set       | `123456` (default)                                                     | `00123456`                                                     |
-| Pin set via `set pin <pin>` | your configured pin (any device)                                       | your pin zero-padded to 8 digits, e.g. pin `4242` → `00004242` |
-
-Notes on the pin:
-
-- on devices with a screen, the pin is only random while no pin has been saved; run
-  `set pin <pin>` for a fixed password (takes effect next boot)
-- headless devices in public areas should always get a custom pin — `00123456` is a
-  documented default, so treat it like a default router password
-
-Recovery steps:
-
-1. join the `EastMesh-WiFi` network with the password from the table above
-2. open the rescue CLI with `telnet 192.168.4.1` (or `nc 192.168.4.1 23`) — all
-   rescue commands above are available
-3. `set wifi.ssid <ssid>`, then `set wifi.pwd <password>` — the device immediately
-   retries the network with the new credentials
-4. `reboot` (or just wait — see below)
-
-While the AP is up the device keeps retrying its configured network about once a
-minute (expect a brief AP hiccup at each attempt); as soon as the station
-connection succeeds, the recovery AP shuts down automatically (this also drops
-your rescue session — that's the sign it worked).
-
-### Using the Companion App over the AP (Roaming)
-
-The recovery AP is not just for fixing credentials — the full companion protocol
-is available through it, which makes it a roaming access mode when the device is
-away from its configured network:
-
-1. join `EastMesh-WiFi` with the pin-derived password (see the table above)
-2. in the MeshCore companion app, add/connect a Wi-Fi device with host
-   `192.168.4.1` and port `5000`
-3. use the app normally — messages, contacts, channels all work over the AP
-
-Notes for roaming use:
-
-- run `set pin <pin>` once so the AP password stays fixed across reboots;
-  otherwise devices with a screen pick a new random pin every boot
-- the AP appears about 60 seconds after boot (the device tries its configured
-  network first), and stays up for as long as that network is unreachable
-- back in range of its configured network, the device joins it and shuts the AP
-  down automatically — reconnect the app via the LAN address instead
 
 ## Heap Health Check Script
 

@@ -69,7 +69,7 @@ private:
   httpd_handle_t _server;
   httpd_handle_t _redirect_server;
   char _token[33];
-  unsigned long _last_activity_ms;
+  volatile unsigned long _last_activity_ms;  // written by the httpd task, read by the main loop
   unsigned int _start_deferred_count;
   unsigned int _restart_count;
   RouteContext _route_context;
