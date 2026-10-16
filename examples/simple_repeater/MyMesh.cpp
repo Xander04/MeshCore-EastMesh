@@ -4,10 +4,6 @@
 #include <cstdlib>
 #include <helpers/sensors/LPPDataHelpers.h>
 
-#if defined(TBEAM_1W)
-  #include <TBeam1WBoard.h>
-#endif
-
 #if defined(ESP32) && WITH_WEB_PANEL
   #include <WiFi.h>
 #endif
@@ -675,7 +671,7 @@ int MyMesh::handleRequest(ClientInfo *sender, uint32_t sender_timestamp, uint8_t
       int results_offset = 0;
       uint8_t results_buffer[130];
       for(int index = 0; index < count && index + offset < neighbours_count; index++){
-        
+
         // stop if we can't fit another entry in results
         int entry_size = pubkey_prefix_length + 4 + 1;
         if(results_offset + entry_size > sizeof(results_buffer)){
@@ -1045,7 +1041,7 @@ void MyMesh::onPeerDataRecv(mesh::Packet *packet, uint8_t type, int sender_idx, 
     memcpy(&sender_timestamp, data, 4); // timestamp (by sender's RTC clock - which could be wrong)
     uint8_t flags = (data[4] >> 2);        // message attempt number, and other flags
 
-    if (!(flags == TXT_TYPE_PLAIN || flags == TXT_TYPE_CLI_DATA)) {
+    if (!(flags == TXT_TYPE_PLAIN || flags == TXT_TYPE_CLI_DATA || flags == TXT_TYPE_CLI_COMMAND)) {
       MESH_DEBUG_PRINTLN("onPeerDataRecv: unsupported text type received: flags=%02x", (uint32_t)flags);
     } else if (sender_timestamp >= client->last_timestamp) { // prevent replay attacks
       bool is_retry = (sender_timestamp == client->last_timestamp);
@@ -1131,6 +1127,7 @@ void MyMesh::onControlDataRecv(mesh::Packet* packet) {
   uint8_t type = packet->payload[0] & 0xF0;    // just test upper 4 bits
   if (type == CTL_TYPE_NODE_DISCOVER_REQ && packet->payload_len >= 6
       && !_prefs.disable_fwd && discover_limiter.allow(rtc_clock.getCurrentTime())
+      && !isHiddenNode()   // this node wishes to NOT be discoverable
   ) {
     int i = 1;
     uint8_t  filter = packet->payload[i++];
@@ -1264,6 +1261,7 @@ MyMesh::MyMesh(mesh::MainBoard &board, mesh::Radio &radio, mesh::MillisecondCloc
   _prefs.flood_max_advert = 8;
   _prefs.interference_threshold = 0; // disabled
   _prefs.cad_enabled = 0;            // hardware CAD before TX (off by default; 'set cad on')
+  _prefs.loop_detect = LOOP_DETECT_MINIMAL;
 
   // bridge defaults
   _prefs.bridge_enabled = 1;    // enabled
@@ -1283,8 +1281,6 @@ MyMesh::MyMesh(mesh::MainBoard &board, mesh::Radio &radio, mesh::MillisecondCloc
   _prefs.advert_loc_policy = ADVERT_LOC_PREFS;
 
   _prefs.adc_multiplier = 0.0f; // 0.0f means use default board multiplier
-  _prefs.fan_mode = 0; // auto
-  _prefs.fan_timeout_secs = 30;
 
 #if defined(USE_SX1262) || defined(USE_SX1268)
 #ifdef SX126X_RX_BOOSTED_GAIN
@@ -1396,18 +1392,13 @@ void MyMesh::begin(FILESYSTEM *fs, ArchiveStorage* archive) {
   radio_driver.setRxBoostedGainMode(_prefs.rx_boosted_gain);
   MESH_DEBUG_PRINTLN("RX Boosted Gain Mode: %s",
                      radio_driver.getRxBoostedGainMode() ? "Enabled" : "Disabled");
-  board.setLoRaFemLnaEnabled(_prefs.radio_fem_rxgain);
-  board.setLoRaFemPaGainEnabled(_prefs.radio_fem_txgain);
+
+  board.attachDynamicPrefs(_prefs.getCustom());
 
   updateAdvertTimer();
   updateFloodAdvertTimer();
 
   board.setAdcMultiplier(_prefs.adc_multiplier);
-#if defined(TBEAM_1W)
-  auto& tbeam1w_board = static_cast<TBeam1WBoard&>(board);
-  tbeam1w_board.setFanPostTxHoldMs(static_cast<uint32_t>(_prefs.fan_timeout_secs) * 1000UL);
-  tbeam1w_board.setFanMode(static_cast<TBeam1WBoard::FanMode>(_prefs.fan_mode));
-#endif
 
 #if ENV_INCLUDE_GPS == 1
   applyGpsPrefs();
@@ -2308,55 +2299,6 @@ void MyMesh::handleCommand(uint32_t sender_timestamp, char *command, char *reply
              (_archive != nullptr && _archive->isMounted()) ? "mounted" : "unavailable");
   } else if (strcmp(command, "purge sd") == 0) {
     purgeSdCard(reply, 160);
-#endif
-#if defined(TBEAM_1W)
-  } else if (strcmp(command, "get fan") == 0) {
-    auto& tbeam1w_board = static_cast<TBeam1WBoard&>(board);
-    const float temp_c = tbeam1w_board.getLastBoardTemperatureC();
-    if (isnan(temp_c)) {
-      snprintf(reply, 160, "> mode:%s state:%s timeout:%lus temp:unavailable",
-               tbeam1w_board.getFanModeName(),
-               tbeam1w_board.isFanEnabled() ? "on" : "off",
-               static_cast<unsigned long>(tbeam1w_board.getFanPostTxHoldMs() / 1000UL));
-    } else {
-      snprintf(reply, 160, "> mode:%s state:%s timeout:%lus temp:%.2fC",
-               tbeam1w_board.getFanModeName(),
-               tbeam1w_board.isFanEnabled() ? "on" : "off",
-               static_cast<unsigned long>(tbeam1w_board.getFanPostTxHoldMs() / 1000UL),
-               temp_c);
-    }
-  } else if (memcmp(command, "set fan ", 8) == 0) {
-    auto& tbeam1w_board = static_cast<TBeam1WBoard&>(board);
-    const char* mode = &command[8];
-    if (memcmp(mode, "auto", 4) == 0) {
-      _prefs.fan_mode = static_cast<uint8_t>(TBeam1WBoard::FanMode::Auto);
-      tbeam1w_board.setFanMode(TBeam1WBoard::FanMode::Auto);
-      savePrefs();
-      strcpy(reply, "OK - fan auto");
-    } else if (memcmp(mode, "on", 2) == 0) {
-      _prefs.fan_mode = static_cast<uint8_t>(TBeam1WBoard::FanMode::On);
-      tbeam1w_board.setFanMode(TBeam1WBoard::FanMode::On);
-      savePrefs();
-      strcpy(reply, "OK - fan on");
-    } else if (memcmp(mode, "off", 3) == 0) {
-      _prefs.fan_mode = static_cast<uint8_t>(TBeam1WBoard::FanMode::Off);
-      tbeam1w_board.setFanMode(TBeam1WBoard::FanMode::Off);
-      savePrefs();
-      strcpy(reply, "OK - fan off");
-    } else if (memcmp(mode, "timeout ", 8) == 0) {
-      char* end = nullptr;
-      const unsigned long timeout_s = strtoul(&mode[8], &end, 10);
-      while (end != nullptr && *end == ' ') end++;
-      if (end != nullptr && *end == 's' && *(end + 1) == 0 && tbeam1w_board.setFanPostTxHoldMs(static_cast<uint32_t>(timeout_s * 1000UL))) {
-        _prefs.fan_timeout_secs = static_cast<uint16_t>(timeout_s);
-        savePrefs();
-        snprintf(reply, 160, "OK - fan timeout %lus", timeout_s);
-      } else {
-        strcpy(reply, "Err - use 0s..600s");
-      }
-    } else {
-      strcpy(reply, "Err - use auto|on|off|timeout <Ns>");
-    }
 #endif
 #if defined(ESP_PLATFORM)
   } else if (strcmp(command, "get wifi.status") == 0) {

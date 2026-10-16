@@ -17,6 +17,7 @@
 #include "soc/rtc.h"
 #include "esp_system.h"
 #include <driver/rtc_io.h>
+#include <helpers/KeyValueStore.h>
 
 class ESP32Board : public mesh::MainBoard {
 protected:
@@ -52,6 +53,8 @@ public:
     Wire.begin();
   #endif
   }
+
+  void attachDynamicPrefs(KeyValueStore* prefs) { }  // no-op
 
   // Temperature from ESP32 MCU
   float getMCUTemperature() override {
@@ -199,13 +202,17 @@ public:
   }
 };
 
+static RTC_NOINIT_ATTR uint32_t _rtc_backup_time;
+static RTC_NOINIT_ATTR uint32_t _rtc_backup_magic;
+#define RTC_BACKUP_MAGIC  0xAA55CC33
+#define RTC_TIME_MIN      1772323200  // 1 Mar 2026
+
 class ESP32RTCClock : public mesh::RTCClock {
   Preferences _prefs;
   bool _prefs_ready = false;
   uint32_t _last_persisted_time = 0;
   unsigned long _last_persist_ms = 0;
 
-  static constexpr uint32_t kDefaultEpoch = 1715770351;  // 15 May 2024, 8:50pm
   static constexpr unsigned long kPersistIntervalMs = 15UL * 60UL * 1000UL;
 
   void applyTime(uint32_t time) {
@@ -240,15 +247,26 @@ public:
   ESP32RTCClock() { }
   void begin() {
     _prefs_ready = _prefs.begin("mesh-clock", false);
-    const uint32_t persisted_epoch = _prefs_ready ? _prefs.getULong("epoch", 0) : 0;
     esp_reset_reason_t reason = esp_reset_reason();
-    if (persisted_epoch > kDefaultEpoch) {
+    if (reason == ESP_RST_DEEPSLEEP) {
+      return;  // ESP-IDF preserves system time across deep sleep
+    }
+    // All other resets (power-on, crash, WDT, brownout) lose system time.
+    // Restore from RTC backup if valid (survives soft resets), then from the
+    // EastMesh NVS-persisted epoch (survives power loss), otherwise use hardcoded seed.
+    const uint32_t persisted_epoch = _prefs_ready ? _prefs.getULong("epoch", 0) : 0;
+    if (_rtc_backup_magic == RTC_BACKUP_MAGIC && _rtc_backup_time > RTC_TIME_MIN) {
+      applyTime(_rtc_backup_time);
+    } else if (persisted_epoch > RTC_TIME_MIN) {
       applyTime(persisted_epoch);
+      _rtc_backup_time = persisted_epoch;
+      _rtc_backup_magic = RTC_BACKUP_MAGIC;
+    } else {
+      applyTime(RTC_TIME_MIN);
+    }
+    if (persisted_epoch > RTC_TIME_MIN) {
       _last_persisted_time = persisted_epoch;
       _last_persist_ms = millis();
-    } else if (reason == ESP_RST_POWERON) {
-      // start with some date/time in the recent past
-      applyTime(kDefaultEpoch);
     }
   }
   uint32_t getCurrentTime() override {
@@ -258,9 +276,17 @@ public:
   }
   void setCurrentTime(uint32_t time) override {
     applyTime(time);
+    _rtc_backup_time = time;
+    _rtc_backup_magic = RTC_BACKUP_MAGIC;
     persistCurrentTime(true);
   }
   void tick() override {
+    time_t now;
+    time(&now);
+    if (now > RTC_TIME_MIN && (uint32_t)now != _rtc_backup_time) {
+      _rtc_backup_time = (uint32_t)now;
+      _rtc_backup_magic = RTC_BACKUP_MAGIC;
+    }
     persistCurrentTime(false);
   }
 };

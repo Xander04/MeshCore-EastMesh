@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "DataStore.h"
+#include <helpers/TxtDataHelpers.h>
 
 #if defined(EXTRAFS) || defined(QSPIFLASH)
   #define MAX_BLOBRECS 100
@@ -237,16 +238,18 @@ void DataStore::loadPrefsInt(const char *filename, NodePrefs& _prefs) {
     file.read((uint8_t *)&_prefs.autoadd_max_hops, sizeof(_prefs.autoadd_max_hops));       // 88
     file.read((uint8_t *)&_prefs.rx_boosted_gain, sizeof(_prefs.rx_boosted_gain));         // 89
 
-    const int wifi_bytes = sizeof(_prefs.wifi_powersave) + sizeof(_prefs.wifi_ssid) + sizeof(_prefs.wifi_pwd);
+    // legacy EastMesh WiFi fields: fixed on-disk sizes (powersave 1, ssid 33, pwd 65)
+    uint8_t legacy_wifi_powersave = 0;
+    char legacy_wifi_ssid[33] = {0};
+    char legacy_wifi_pwd[65] = {0};
+    const int wifi_bytes = sizeof(legacy_wifi_powersave) + sizeof(legacy_wifi_ssid) + sizeof(legacy_wifi_pwd);
     const int scope_bytes = sizeof(_prefs.default_scope_name) + sizeof(_prefs.default_scope_key);
     const int remaining = file.available();
 
     if (remaining >= wifi_bytes + scope_bytes) {
-      file.read((uint8_t *)&_prefs.wifi_powersave, sizeof(_prefs.wifi_powersave));         // 90
-      file.read((uint8_t *)_prefs.wifi_ssid, sizeof(_prefs.wifi_ssid));                    // 91
-      _prefs.wifi_ssid[sizeof(_prefs.wifi_ssid) - 1] = 0;
-      file.read((uint8_t *)_prefs.wifi_pwd, sizeof(_prefs.wifi_pwd));                      // 124
-      _prefs.wifi_pwd[sizeof(_prefs.wifi_pwd) - 1] = 0;
+      file.read((uint8_t *)&legacy_wifi_powersave, sizeof(legacy_wifi_powersave));         // 90
+      file.read((uint8_t *)legacy_wifi_ssid, sizeof(legacy_wifi_ssid));                    // 91
+      file.read((uint8_t *)legacy_wifi_pwd, sizeof(legacy_wifi_pwd));                      // 124
       file.read((uint8_t *)_prefs.default_scope_name, sizeof(_prefs.default_scope_name));  // 189
       _prefs.default_scope_name[sizeof(_prefs.default_scope_name) - 1] = 0;
       file.read((uint8_t *)_prefs.default_scope_key, sizeof(_prefs.default_scope_key));    // 220
@@ -255,18 +258,23 @@ void DataStore::loadPrefsInt(const char *filename, NodePrefs& _prefs) {
       _prefs.default_scope_name[sizeof(_prefs.default_scope_name) - 1] = 0;
       file.read((uint8_t *)_prefs.default_scope_key, sizeof(_prefs.default_scope_key));    // 121
     } else {
-      if (file.available() >= (int)sizeof(_prefs.wifi_powersave)) {
-        file.read((uint8_t *)&_prefs.wifi_powersave, sizeof(_prefs.wifi_powersave));       // 90
+      if (file.available() >= (int)sizeof(legacy_wifi_powersave)) {
+        file.read((uint8_t *)&legacy_wifi_powersave, sizeof(legacy_wifi_powersave));       // 90
       }
-      if (file.available() >= (int)sizeof(_prefs.wifi_ssid)) {
-        file.read((uint8_t *)_prefs.wifi_ssid, sizeof(_prefs.wifi_ssid));                  // 91
-        _prefs.wifi_ssid[sizeof(_prefs.wifi_ssid) - 1] = 0;
+      if (file.available() >= (int)sizeof(legacy_wifi_ssid)) {
+        file.read((uint8_t *)legacy_wifi_ssid, sizeof(legacy_wifi_ssid));                  // 91
       }
-      if (file.available() >= (int)sizeof(_prefs.wifi_pwd)) {
-        file.read((uint8_t *)_prefs.wifi_pwd, sizeof(_prefs.wifi_pwd));                    // 124
-        _prefs.wifi_pwd[sizeof(_prefs.wifi_pwd) - 1] = 0;
+      if (file.available() >= (int)sizeof(legacy_wifi_pwd)) {
+        file.read((uint8_t *)legacy_wifi_pwd, sizeof(legacy_wifi_pwd));                    // 124
       }
     }
+#ifdef ENABLE_WIFI_INTERFACE
+    _prefs.wifi_powersave = legacy_wifi_powersave <= 2 ? legacy_wifi_powersave : 0;
+    legacy_wifi_ssid[sizeof(legacy_wifi_ssid) - 1] = 0;
+    legacy_wifi_pwd[sizeof(legacy_wifi_pwd) - 1] = 0;
+    StrHelper::strncpy(_prefs.wifi_ssid, legacy_wifi_ssid, sizeof(_prefs.wifi_ssid));
+    StrHelper::strncpy(_prefs.wifi_pwd, legacy_wifi_pwd, sizeof(_prefs.wifi_pwd));
+#endif
 
     // migrate old fields
     _prefs.setRepeatEn(_prefs._client_repeat != 0);
