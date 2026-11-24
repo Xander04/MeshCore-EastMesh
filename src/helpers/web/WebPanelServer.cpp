@@ -13,6 +13,9 @@
 
 #include "EastMeshFavicon.h"
 #include "../mqtt/generated/WebPanelCert.h"
+#if defined(WITH_ETHERNET_UPLINK)
+  #include <helpers/ethernet/uplink/EthernetLink.h>
+#endif
 
 namespace {
 
@@ -29,7 +32,12 @@ constexpr size_t kWebPasswordBufferSize = 80;
 constexpr size_t kWebCommandBufferSize = 192;
 constexpr size_t kWebReplyBufferSize = 256;
 constexpr size_t kWebStatsQueryBufferSize = 96;
+#if defined(WITH_ETHERNET_UPLINK)
+// +1 KiB headroom for the "ethernet" object; the worst-case summary was already close to 4608.
+constexpr size_t kWebStatsReplyBufferSize = 5632;
+#else
 constexpr size_t kWebStatsReplyBufferSize = 4608;
+#endif
 constexpr size_t kWebPageChunkSize = 768;
 constexpr size_t kWebFirmwareChunkSize = 4096;
 constexpr unsigned long kWebIdleTimeoutMs = WEB_PANEL_IDLE_TIMEOUT_MS;
@@ -625,7 +633,12 @@ const char kWebPanelAppHtml[] PROGMEM = R"HTML(
           <div class="quick">
             <button data-cmd="get wifi.status">wifi.status</button>
             <button data-cmd="get wifi.powersaving">wifi.powersaving</button>
-          </div>
+)HTML"
+#if defined(WITH_ETHERNET_UPLINK)
+R"HTML(            <button data-cmd="get eth.status">eth.status</button>
+)HTML"
+#endif
+R"HTML(          </div>
         </div>
         <div>
           <span class="label">MQTT</span>
@@ -2001,7 +2014,63 @@ const char kWebPanelAppHtml[] PROGMEM = R"HTML(
         </div>
       </section>`;
     }
-    function renderRadioCard(radio) {
+)HTML"
+#if defined(WITH_ETHERNET_UPLINK)
+R"HTML(    function ethStateLabel(eth) {
+      switch (eth.state) {
+        case "connected": return "Connected";
+        case "connecting": return "Connecting";
+        case "detecting": return "Detecting link";
+        case "no_ip": return "Link up, no IP";
+        case "no_link": return "No cable";
+        default: return "Unavailable";
+      }
+    }
+    function uplinkLabel(uplink) {
+      return uplink === "ethernet" ? "Ethernet" : (uplink === "wifi" ? "Wi-Fi" : "None");
+    }
+    function renderEthernetCard(eth) {
+      if (!eth.enabled) {
+        return `<section class="hud-card">
+          <h3>Ethernet</h3>
+          <div class="metric-grid">
+            ${renderMetric("Status", "Unavailable")}
+          </div>
+        </section>`;
+      }
+      const speed = eth.link && Number.isFinite(eth.speed) ? eth.speed : 0;
+      const tone = eth.connected ? "" : (eth.link ? "warn" : "bad");
+      const linkNote = eth.link ? ((eth.duplex && eth.duplex !== "--") ? eth.duplex + " duplex" : "link up") : "no link";
+      const wifiNote = eth.wifi_held_off ? "Off (Ethernet priority)" : (eth.uplink === "wifi" ? "In use (fallback)" : "Available");
+      return `<section class="hud-card">
+        <h3>Ethernet</h3>
+        ${renderMeter("Link Speed", speed ? speed + " Mbps" : "--", pctRange(speed, 0, 100), linkNote, tone)}
+        <div class="metric-grid">
+          ${renderMetric("Status", ethStateLabel(eth))}
+          ${renderMetric("Active Uplink", uplinkLabel(eth.uplink))}
+          ${renderMetric("IP", eth.ip || "--")}
+          ${renderMetric("Subnet", eth.mask || "--")}
+          ${renderMetric("Gateway", eth.gateway || "--")}
+          ${renderMetric("DNS", eth.dns || "--")}
+          ${renderMetric("MAC", eth.mac || "--")}
+          ${renderMetric("Wi-Fi", wifiNote)}
+        </div>
+      </section>`;
+    }
+    function renderWifiStandbyCard(wifi, powersave) {
+      return `<section class="hud-card">
+        <h3>Wi-Fi</h3>
+        <div class="metric-grid">
+          ${renderMetric("Status", "Standby")}
+          ${renderMetric("Reason", wifi.state === "ethernet_active" ? "Ethernet active" : "Ethernet connecting")}
+          ${renderMetric("SSID", wifi.ssid || "-")}
+          ${renderMetric("Power Save", powersave || "--")}
+        </div>
+      </section>`;
+    }
+)HTML"
+#endif
+R"HTML(    function renderRadioCard(radio) {
       const rssiPct = pctRange(radio.last_rssi, -125, -30);
       const snrPct = pctRange(radio.last_snr, -15, 15);
       const noisePct = 100 - pctRange(radio.noise_floor, -130, -50);
@@ -2075,11 +2144,24 @@ const char kWebPanelAppHtml[] PROGMEM = R"HTML(
         results.radio ? renderRadioCard(results.radio) : renderMissingCard("Radio", "stats-radio unavailable"),
         results.memory ? renderMemoryCard(results.memory) : renderMissingCard("Memory", "memory unavailable")
       ];
-      const lowerCards = [
+)HTML"
+#if defined(WITH_ETHERNET_UPLINK)
+R"HTML(      const lowerCards = [
+        results.ethernet ? renderEthernetCard(results.ethernet) : "",
+        results.wifi
+          ? (results.wifi.status === "disabled" ? renderWifiStandbyCard(results.wifi, results.wifi_powersave) : renderWifiCard(results.wifi, results.wifi_powersave))
+          : renderMissingCard("Wi-Fi", "wifi.status unavailable"),
+        results.packets ? renderPacketsCard(results.packets) : renderMissingCard("Packets", "stats-packets unavailable")
+      ];
+)HTML"
+#else
+R"HTML(      const lowerCards = [
         results.wifi ? renderWifiCard(results.wifi, results.wifi_powersave) : renderMissingCard("Wi-Fi", "wifi.status unavailable"),
         results.packets ? renderPacketsCard(results.packets) : renderMissingCard("Packets", "stats-packets unavailable")
       ];
-      dashboardEl.innerHTML = notices +
+)HTML"
+#endif
+R"HTML(      dashboardEl.innerHTML = notices +
         `<div class="hud-grid-1">${coreCards.join("")}</div>` +
         `<div class="hud-grid-2">${middleCards.join("")}</div>` +
         `<div class="hud-grid-2">${lowerCards.join("")}</div>`;
@@ -2203,7 +2285,12 @@ const char kWebPanelAppHtml[] PROGMEM = R"HTML(
         radio: payload && payload.radio ? payload.radio : null,
         packets: payload && payload.packets ? payload.packets : null,
         memory: payload && payload.memory ? payload.memory : null,
-        wifi: payload && payload.wifi ? payload.wifi : null,
+)HTML"
+#if defined(WITH_ETHERNET_UPLINK)
+R"HTML(        ethernet: payload && payload.ethernet ? payload.ethernet : null,
+)HTML"
+#endif
+R"HTML(        wifi: payload && payload.wifi ? payload.wifi : null,
         wifi_powersave: payload && payload.wifi ? payload.wifi.powersave : "--"
       };
       renderStatsDashboard(results, [], "statsSummary");
@@ -3420,7 +3507,11 @@ bool WebPanelServer::start() {
     WEB_PANEL_LOG("redirect server start failed rc=0x%x", static_cast<unsigned>(rc));
   }
 
+#if defined(WITH_ETHERNET_UPLINK)
+  WEB_PANEL_LOG("server started t=%lu on https://%s/", static_cast<unsigned long>(millis()), EthernetLink::uplinkIP().toString().c_str());
+#else
   WEB_PANEL_LOG("server started t=%lu on https://%s/", static_cast<unsigned long>(millis()), WiFi.localIP().toString().c_str());
+#endif
   return true;
 }
 
@@ -3519,7 +3610,11 @@ esp_err_t WebPanelServer::handleHttpRedirect(httpd_req_t* req) {
 
   char location[160];
   const char* path = (req->uri != nullptr && req->uri[0] != 0) ? req->uri : "/";
+#if defined(WITH_ETHERNET_UPLINK)
+  snprintf(location, sizeof(location), "https://%s%s", EthernetLink::uplinkIP().toString().c_str(), path);
+#else
   snprintf(location, sizeof(location), "https://%s%s", WiFi.localIP().toString().c_str(), path);
+#endif
   httpd_resp_set_status(req, "302 Found");
   httpd_resp_set_hdr(req, "Location", location);
   httpd_resp_set_hdr(req, "Cache-Control", "no-store");

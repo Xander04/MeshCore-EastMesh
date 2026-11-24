@@ -12,6 +12,9 @@
   #include <lwip/etharp.h>
   #include <lwip/netif.h>
   #include <lwip/tcpip.h>
+  #if defined(WITH_ETHERNET_UPLINK)
+    #include <helpers/ethernet/uplink/EthernetLink.h>
+  #endif
 #endif
 
 namespace {
@@ -68,6 +71,9 @@ NetworkService::NetworkService()
   _wd_backoff_shift = 0;
   _wd_reconnect_count = 0;
 #endif
+#if defined(WITH_ETHERNET_UPLINK)
+  _net_was_up = false;
+#endif
   NetworkPrefsStore::setDefaults(_prefs);
 }
 
@@ -82,6 +88,11 @@ void NetworkService::begin(FILESYSTEM* fs,
                 getPowerSaveLabel(_prefs.wifi_powersave),
                 _prefs.wifi_channel,
                 _prefs.wifi_ssid[0] ? _prefs.wifi_ssid : "-");
+#if defined(WITH_ETHERNET_UPLINK)
+  if (!EthernetLink::begin()) {
+    Serial.println("[BOOT] ethernet unavailable, using Wi-Fi only");
+  }
+#endif
 #endif
 }
 
@@ -101,6 +112,9 @@ void NetworkService::end() {
 
 void NetworkService::loop(bool network_required) {
 #if defined(ESP_PLATFORM)
+#if defined(WITH_ETHERNET_UPLINK)
+  EthernetLink::update(millis());
+#endif
   ensureWifi(network_required);
   updateTimeSync();
   updateConnectivityWatchdog();
@@ -257,6 +271,13 @@ const char* NetworkService::getWifiPowerSave() const {
 
 void NetworkService::formatWifiStatusReply(char* reply, size_t reply_size) const {
 #if defined(ESP_PLATFORM)
+#if defined(WITH_ETHERNET_UPLINK)
+  if (EthernetLink::holdsWifiOff()) {
+    snprintf(reply, reply_size, "> ssid:%s status:disabled state:%s", _prefs.wifi_ssid[0] ? _prefs.wifi_ssid : "-",
+             EthernetLink::hasIP() ? "ethernet_active" : "ethernet_pending");
+    return;
+  }
+#endif
   const char* status = "disconnected";
   const char* state = "disconnected";
   wl_status_t wifi_status = WiFi.status();
@@ -359,6 +380,11 @@ void NetworkService::restartTimeSync() {
 
 bool NetworkService::isWifiConnected() const {
 #if defined(ESP_PLATFORM)
+#if defined(WITH_ETHERNET_UPLINK)
+  if (EthernetLink::hasIP()) {
+    return true;  // Ethernet is carrying traffic
+  }
+#endif
   return _wifi_started && WiFi.status() == WL_CONNECTED;
 #else
   return false;
@@ -389,6 +415,14 @@ const char* NetworkService::getPowerSaveLabel(uint8_t mode) {
 }
 
 void NetworkService::ensureWifi(bool network_required) {
+#if defined(WITH_ETHERNET_UPLINK)
+  // While Ethernet is detecting/connecting/connected, treat Wi-Fi as not required so the
+  // existing teardown below switches it off. When Ethernet is lost the hold is released and
+  // Wi-Fi starts again through the normal path (fallback).
+  if (EthernetLink::holdsWifiOff()) {
+    network_required = false;
+  }
+#endif
   if (!network_required) {
     if (_wifi_started) {
       WiFi.disconnect(true, true);
@@ -481,7 +515,23 @@ void NetworkService::ensureWifi(bool network_required) {
 
 void NetworkService::updateTimeSync() {
   bool prev_have_time_sync = _have_time_sync;
+#if defined(WITH_ETHERNET_UPLINK)
+  {
+    // The SNTP "completed" status is consumed when read, so after an uplink switch nothing
+    // would re-assert time sync until the next hourly poll and MQTT (which needs it) would
+    // stay down. Re-arm SNTP whenever connectivity comes back on either interface.
+    const bool net_up = isWifiConnected();
+    if (net_up && !_net_was_up) {
+      _sntp_started = false;
+    }
+    _net_was_up = net_up;
+  }
+#endif
+#if defined(WITH_ETHERNET_UPLINK)
+  if (!isWifiConnected()) {  // any uplink (Ethernet or Wi-Fi)
+#else
   if (!_wifi_started || WiFi.status() != WL_CONNECTED) {
+#endif
     _have_time_sync = false;
     return;
   }
@@ -563,5 +613,30 @@ void NetworkService::updateConnectivityWatchdog() {
                   (now_ms - _wd_last_gateway_ok) / 1000, _wd_reconnect_count);
     forceReconnect();
   }
+}
+#endif
+
+#if defined(WITH_ETHERNET_UPLINK)
+bool NetworkService::isStaConnected() const {
+  return _wifi_started && WiFi.status() == WL_CONNECTED;
+}
+
+bool NetworkService::isWifiHeldOffByEthernet() const {
+  return EthernetLink::holdsWifiOff();
+}
+
+const char* NetworkService::getUplinkName() const {
+  if (EthernetLink::hasIP()) {
+    return "ethernet";
+  }
+  return isStaConnected() ? "wifi" : "none";
+}
+
+void NetworkService::formatEthernetStatusReply(char* reply, size_t reply_size) const {
+  EthernetLink::formatStatus(reply, reply_size, getUplinkName());
+}
+
+size_t NetworkService::formatEthernetJson(char* out, size_t out_size) const {
+  return EthernetLink::formatJson(out, out_size, getUplinkName(), EthernetLink::holdsWifiOff());
 }
 #endif

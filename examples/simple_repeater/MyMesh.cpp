@@ -2303,6 +2303,10 @@ void MyMesh::handleCommand(uint32_t sender_timestamp, char *command, char *reply
 #if defined(ESP_PLATFORM)
   } else if (strcmp(command, "get wifi.status") == 0) {
     network.formatWifiStatusReply(reply, 160);
+#if defined(WITH_ETHERNET_UPLINK)
+  } else if (strcmp(command, "get eth.status") == 0) {
+    network.formatEthernetStatusReply(reply, 160);
+#endif
   } else if (strcmp(command, "get wifi.ssid") == 0) {
     sprintf(reply, "> %s", network.getWifiSSID()[0] ? network.getWifiSSID() : "-");
   } else if (strcmp(command, "get wifi.powersaving") == 0) {
@@ -2675,6 +2679,23 @@ bool MyMesh::formatWebStatsSummaryJson(char* reply, size_t reply_size) {
   wifi_signal[sizeof(wifi_signal) - 1] = 0;
 #endif
 
+#if defined(WITH_ETHERNET_UPLINK)
+  if (network.isWifiHeldOffByEthernet()) {
+    // Wi-Fi is deliberately off while Ethernet connects/is connected; don't report stale STA values.
+    const bool eth_active = strcmp(network.getUplinkName(), "ethernet") == 0;
+    snprintf(wifi_status, sizeof(wifi_status), "disabled");
+    snprintf(wifi_state, sizeof(wifi_state), "%s", eth_active ? "ethernet_active" : "ethernet_pending");
+    snprintf(wifi_ip, sizeof(wifi_ip), "--");
+    snprintf(wifi_signal, sizeof(wifi_signal), "--");
+    wifi_rssi = 0;
+    wifi_quality = 0;
+    wifi_code = 0;
+    wifi_channel = 0;
+    wifi_gateway = "--";
+    wifi_watchdog_count = 0;
+  }
+#endif
+
   const uint16_t battery_mv = getBatteryMilliVolts(true);
   const int battery_pct = board.getBatteryPercent();
   const uint16_t battery_min_mv = board.getBatteryMinMilliVolts();
@@ -2782,7 +2803,11 @@ bool MyMesh::formatWebStatsSummaryJson(char* reply, size_t reply_size) {
                      psram_max,
                      wifi_ssid,
                      wifi_status,
+#if defined(WITH_ETHERNET_UPLINK)
+                     network.isStaConnected() ? "true" : "false",
+#else
                      network.isWifiConnected() ? "true" : "false",
+#endif
                      wifi_state,
                      wifi_code,
                      wifi_ip,
@@ -2815,6 +2840,17 @@ bool MyMesh::formatWebStatsSummaryJson(char* reply, size_t reply_size) {
   if (!appendJsonNeighbours(reply, reply_size, offset)) {
     return false;
   }
+#if defined(WITH_ETHERNET_UPLINK)
+  offset += snprintf(&reply[offset], reply_size - offset, ",\"ethernet\":");
+  if (offset >= reply_size) {
+    return false;
+  }
+  const size_t eth_len = network.formatEthernetJson(&reply[offset], reply_size - offset);
+  if (eth_len == 0) {
+    return false;
+  }
+  offset += eth_len;
+#endif
   offset += snprintf(&reply[offset], reply_size - offset, "}");
   return offset < reply_size;
 #endif

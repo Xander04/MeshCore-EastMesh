@@ -119,6 +119,16 @@ Legacy dotted aliases are also accepted:
 
 Observers also run a connectivity watchdog: while Wi-Fi reports connected, the node ARP-probes its gateway every 30 seconds. If the gateway stays silent for 3 minutes (for example, an AP that keeps beaconing after losing its wired uplink), the node forces a full reconnect on its own, backing off up to 48 minutes between attempts while the outage persists. `wd:<n>` in `get wifi.status` counts these forced reconnects since boot.
 
+### Ethernet For Observers (ThinkNode M7)
+
+The `ThinkNode_M7_repeater_observer` build supports the M7's built-in Ethernet port (CH390) as an uplink alongside Wi-Fi. Other observer builds do not have this command.
+
+- `get eth.status`: shows Ethernet `state` (`detecting`, `connecting`, `connected`, `no_ip`, `no_link`), `link` (`up|down`), IP, gateway, DNS, MAC, negotiated `speed` and `duplex`, and the active `uplink` (`ethernet`, `wifi` or `none`). Replies `eth:unavailable` if the Ethernet hardware did not initialise.
+
+Wi-Fi and Ethernet are not used at the same time. While Ethernet is detecting, connecting or connected, Wi-Fi is switched off and `get wifi.status` reports `status:disabled state:ethernet_active` (or `ethernet_pending` while Ethernet is still getting an address). When the cable is removed, Wi-Fi is switched back on after a 3 second hold-off and the node reconnects using the saved Wi-Fi credentials. If a cable is connected but no IP address is obtained within 60 seconds (for example no DHCP server), Wi-Fi is also allowed as a fallback, and Ethernet takes over again if an address arrives later. The settings stay saved, so `set wifi.ssid` and `set wifi.pwd` still apply for the fallback.
+
+Ethernet uses DHCP. `get web.status` reports the URL using whichever interface is active.
+
 ### NTP Settings For Observers
 
 - `get ntp.server1`: shows the primary NTP server.

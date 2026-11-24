@@ -16,6 +16,8 @@ For normal first-time use:
 6. Use the panel for setup or troubleshooting.
 7. When finished, use `set web off` if the repeater needs maximum MQTT headroom.
 
+On the ThinkNode M7 you can plug in an Ethernet cable instead of using Wi-Fi: run `get eth.status` to find the IP address, or read it from the Ethernet card on the Stats page. See [Ethernet On The ThinkNode M7](#ethernet-on-the-thinknode-m7).
+
 Most users only need the panel for first setup, occasional setting changes, and troubleshooting. Leave it enabled only when browser access is worth the extra memory use.
 
 ## What It Is
@@ -109,7 +111,7 @@ Example:
 - browsers will warn the first time you connect
 - the panel exposes the repeater CLI after login
 - the browser keeps the session token while changing between `/app` and `/stats`; the page switches views in place until logout, idle lock, or device restart
-- brief Wi-Fi drops can interrupt in-flight page loads, but should not force a new login when the web panel restarts
+- brief network drops (Wi-Fi or Ethernet) can interrupt in-flight page loads, but should not force a new login when the web panel restarts
 - after a device restart or reflash, the app checks the stored token before loading settings and returns to login if the session is stale
 
 This is intended for local admin use on a trusted network, not for open internet exposure.
@@ -166,11 +168,31 @@ It includes:
 - theme toggle
 - `Logout`
 
+## Ethernet On The ThinkNode M7
+
+The `ThinkNode_M7_repeater_observer` build can use the M7's Ethernet port as its network uplink for MQTT, NTP and the web panel. Other boards are not affected and do not show any Ethernet UI.
+
+How Wi-Fi and Ethernet interact:
+
+- only one is used at a time; Ethernet is preferred
+- while Ethernet is detecting a cable, connecting, or connected, Wi-Fi is switched off
+- if the cable is removed, Wi-Fi is switched back on and the node falls back to the saved Wi-Fi credentials; MQTT reconnects once Wi-Fi is up
+- if a cable is connected but no address is obtained for 60 seconds, Wi-Fi is allowed as a fallback and Ethernet takes over again if an address arrives
+- plugging the cable back in switches the node back to Ethernet and turns Wi-Fi off again
+
+On the `/stats` page:
+
+- the **Ethernet** card shows the status (`Connected`, `Connecting`, `Detecting link`, `Link up, no IP`, `No cable`), link speed and duplex, which uplink is active, IP address, subnet, gateway, DNS, MAC address, and whether Wi-Fi is off or in use as a fallback
+- the **Wi-Fi** card shows `Standby` with the reason (`Ethernet active` or `Ethernet connecting`) while Wi-Fi is switched off, instead of signal meters
+- the Quick `get` Commands section has an `eth.status` button
+
+The MAC address on the Ethernet card is the one to use for a DHCP reservation. Run `eastmesh-tools/web-heap-check.sh` after enabling Ethernet if you want to confirm `heap_max` headroom for the web panel's TLS.
+
 ## Quick "get" Commands
 
 This section runs common read-only commands for:
 
-- Wi-Fi
+- Wi-Fi (plus Ethernet on the ThinkNode M7)
 - MQTT
 
 These are useful for quick checks without typing into the CLI field. The MQTT quick actions include `mqtt.status`, `mqtt.client_version`, `mqtt.iata`, `mqtt.owner`, and `mqtt.email`.
@@ -353,7 +375,7 @@ On mobile:
 4. The local HTTP redirect listener on port `80` is released so OTA can take over that port.
 5. Continue with your normal OTA workflow.
 
-If the repeater is already connected to Wi-Fi, OTA uses the existing LAN address. If Wi-Fi is not connected, the repeater starts the `MeshCore-OTA` access point and returns that OTA address instead.
+If the repeater is already connected to Wi-Fi (or, on the ThinkNode M7, to Ethernet), OTA uses the existing LAN address. If neither is connected, the repeater starts the `MeshCore-OTA` access point and returns that OTA address instead.
 If the old redirect listener has not fully released port `80`, the OTA listener retries for up to about 30 seconds before giving up.
 
 If an older build sends you through a strange redirect after `start ota`, use the web `Start OTA` button to begin the upgrade. This redirect issue is fixed in `observer-eastmesh-v1.3.11`.

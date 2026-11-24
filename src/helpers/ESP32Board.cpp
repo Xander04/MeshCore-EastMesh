@@ -5,6 +5,9 @@
 
 #if defined(ADMIN_PASSWORD) && !defined(DISABLE_WIFI_OTA)   // Repeater or Room Server only
 #include <WiFi.h>
+#if defined(WITH_ETHERNET_UPLINK)
+  #include <helpers/ethernet/uplink/EthernetLink.h>
+#endif
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <AsyncElegantOTA.h>
@@ -79,6 +82,11 @@ bool ESP32Board::startOTAUpdate(const char* id, char reply[]) {
   inhibit_sleep = true;   // prevent sleep during OTA
 
   IPAddress ota_ip;
+#if defined(WITH_ETHERNET_UPLINK)
+  if (EthernetLink::hasIP()) {
+    ota_ip = EthernetLink::localIP();  // Ethernet is the uplink: serve OTA on it, no access point needed
+  } else
+#endif
   if (WiFi.status() == WL_CONNECTED) {
     ota_ip = WiFi.localIP();
   } else {

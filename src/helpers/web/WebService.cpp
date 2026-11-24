@@ -2,6 +2,9 @@
 
 #if defined(ESP_PLATFORM) && WITH_WEB_PANEL
   #include <WiFi.h>
+  #if defined(WITH_ETHERNET_UPLINK)
+    #include <helpers/ethernet/uplink/EthernetLink.h>
+  #endif
 #endif
 
 namespace {
@@ -104,9 +107,15 @@ void WebService::formatWebStatusReply(char* reply, size_t reply_size) const {
     return;
   }
 
+#if defined(WITH_ETHERNET_UPLINK)
+  snprintf(reply, reply_size, "> web:up url:https://%s/ auth:%s heals:%u deferred:%u",
+           EthernetLink::uplinkIP().toString().c_str(), _panel.hasSessionToken() ? "unlocked" : "locked",
+           _panel.restartCount(), _panel.startDeferredCount());
+#else
   snprintf(reply, reply_size, "> web:up url:https://%s/ auth:%s heals:%u deferred:%u",
            WiFi.localIP().toString().c_str(), _panel.hasSessionToken() ? "unlocked" : "locked",
            _panel.restartCount(), _panel.startDeferredCount());
+#endif
 #else
   snprintf(reply, reply_size, "> web:unsupported");
 #endif

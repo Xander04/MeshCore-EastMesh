@@ -1,0 +1,116 @@
+.\test\test_uplink_policy\test_uplink_policy.cpp:2:#include "helpers/ethernet/uplink/UplinkPolicy.h"
+.\test\test_uplink_policy\test_uplink_policy.cpp:5:const uint32_t kDetect = UplinkPolicy::detectMillis();
+.\test\test_uplink_policy\test_uplink_policy.cpp:6:const uint32_t kIpWait = UplinkPolicy::ipWaitMillis();
+.\test\test_uplink_policy\test_uplink_policy.cpp:7:const uint32_t kHold = UplinkPolicy::lossHoldMillis();
+.\test\test_uplink_policy\test_uplink_policy.cpp:10:TEST(UplinkPolicy, DisabledNeverHoldsWifi) {
+.\test\test_uplink_policy\test_uplink_policy.cpp:11:  UplinkPolicy p;  // begin() never called: hardware absent
+.\test\test_uplink_policy\test_uplink_policy.cpp:14:  EXPECT_EQ(UplinkPolicy::DISABLED, p.state());
+.\test\test_uplink_policy\test_uplink_policy.cpp:15:  EXPECT_FALSE(p.holdsWifiOff());
+.\test\test_uplink_policy\test_uplink_policy.cpp:18:TEST(UplinkPolicy, HoldsWifiOffWhileDetectingThenReleasesIfNoCable) {
+.\test\test_uplink_policy\test_uplink_policy.cpp:19:  UplinkPolicy p;
+.\test\test_uplink_policy\test_uplink_policy.cpp:22:  EXPECT_EQ(UplinkPolicy::DETECTING, p.state());
+.\test\test_uplink_policy\test_uplink_policy.cpp:23:  EXPECT_TRUE(p.holdsWifiOff());
+.\test\test_uplink_policy\test_uplink_policy.cpp:25:  EXPECT_TRUE(p.holdsWifiOff());
+.\test\test_uplink_policy\test_uplink_policy.cpp:27:  EXPECT_EQ(UplinkPolicy::NO_LINK, p.state());
+.\test\test_uplink_policy\test_uplink_policy.cpp:28:  EXPECT_FALSE(p.holdsWifiOff());
+.\test\test_uplink_policy\test_uplink_policy.cpp:31:TEST(UplinkPolicy, LinkUpDuringDetectionHoldsWifiThroughDhcp) {
+.\test\test_uplink_policy\test_uplink_policy.cpp:32:  UplinkPolicy p;
+.\test\test_uplink_policy\test_uplink_policy.cpp:35:  EXPECT_EQ(UplinkPolicy::CONNECTING, p.state());
+.\test\test_uplink_policy\test_uplink_policy.cpp:36:  EXPECT_TRUE(p.holdsWifiOff());
+.\test\test_uplink_policy\test_uplink_policy.cpp:38:  EXPECT_EQ(UplinkPolicy::CONNECTED, p.state());
+.\test\test_uplink_policy\test_uplink_policy.cpp:39:  EXPECT_TRUE(p.holdsWifiOff());
+.\test\test_uplink_policy\test_uplink_policy.cpp:42:TEST(UplinkPolicy, UnplugFallsBackToWifiAfterShortHold) {
+.\test\test_uplink_policy\test_uplink_policy.cpp:43:  UplinkPolicy p;
+.\test\test_uplink_policy\test_uplink_policy.cpp:46:  ASSERT_EQ(UplinkPolicy::CONNECTED, p.state());
+.\test\test_uplink_policy\test_uplink_policy.cpp:48:  EXPECT_EQ(UplinkPolicy::LINK_LOST, p.state());
+.\test\test_uplink_policy\test_uplink_policy.cpp:49:  EXPECT_TRUE(p.holdsWifiOff());  // debounce
+.\test\test_uplink_policy\test_uplink_policy.cpp:51:  EXPECT_TRUE(p.holdsWifiOff());
+.\test\test_uplink_policy\test_uplink_policy.cpp:53:  EXPECT_EQ(UplinkPolicy::NO_LINK, p.state());
+.\test\test_uplink_policy\test_uplink_policy.cpp:54:  EXPECT_FALSE(p.holdsWifiOff());  // Wi-Fi may start
+.\test\test_uplink_policy\test_uplink_policy.cpp:57:TEST(UplinkPolicy, BriefFlapNeverReleasesWifi) {
+.\test\test_uplink_policy\test_uplink_policy.cpp:58:  UplinkPolicy p;
+.\test\test_uplink_policy\test_uplink_policy.cpp:63:  EXPECT_EQ(UplinkPolicy::CONNECTING, p.state());
+.\test\test_uplink_policy\test_uplink_policy.cpp:64:  EXPECT_TRUE(p.holdsWifiOff());
+.\test\test_uplink_policy\test_uplink_policy.cpp:66:  EXPECT_EQ(UplinkPolicy::CONNECTED, p.state());
+.\test\test_uplink_policy\test_uplink_policy.cpp:69:TEST(UplinkPolicy, ReplugAfterFallbackHoldsWifiOffAgain) {
+.\test\test_uplink_policy\test_uplink_policy.cpp:70:  UplinkPolicy p;
+.\test\test_uplink_policy\test_uplink_policy.cpp:75:  ASSERT_FALSE(p.holdsWifiOff());
+.\test\test_uplink_policy\test_uplink_policy.cpp:77:  EXPECT_EQ(UplinkPolicy::CONNECTING, p.state());
+.\test\test_uplink_policy\test_uplink_policy.cpp:78:  EXPECT_TRUE(p.holdsWifiOff());
+.\test\test_uplink_policy\test_uplink_policy.cpp:81:TEST(UplinkPolicy, LinkWithoutAddressFallsBackAfterIpWait) {
+.\test\test_uplink_policy\test_uplink_policy.cpp:82:  UplinkPolicy p;
+.\test\test_uplink_policy\test_uplink_policy.cpp:85:  ASSERT_EQ(UplinkPolicy::CONNECTING, p.state());
+.\test\test_uplink_policy\test_uplink_policy.cpp:87:  EXPECT_TRUE(p.holdsWifiOff());
+.\test\test_uplink_policy\test_uplink_policy.cpp:89:  EXPECT_EQ(UplinkPolicy::NO_IP, p.state());
+.\test\test_uplink_policy\test_uplink_policy.cpp:90:  EXPECT_FALSE(p.holdsWifiOff());
+.\test\test_uplink_policy\test_uplink_policy.cpp:93:TEST(UplinkPolicy, AddressArrivingLateReclaimsUplinkFromWifi) {
+.\test\test_uplink_policy\test_uplink_policy.cpp:94:  UplinkPolicy p;
+.\test\test_uplink_policy\test_uplink_policy.cpp:98:  ASSERT_FALSE(p.holdsWifiOff());
+.\test\test_uplink_policy\test_uplink_policy.cpp:100:  EXPECT_EQ(UplinkPolicy::CONNECTED, p.state());
+.\test\test_uplink_policy\test_uplink_policy.cpp:101:  EXPECT_TRUE(p.holdsWifiOff());
+.\test\test_uplink_policy\test_uplink_policy.cpp:104:TEST(UplinkPolicy, LostLeaseOnLiveLinkRestartsConnectingWindow) {
+.\test\test_uplink_policy\test_uplink_policy.cpp:105:  UplinkPolicy p;
+.\test\test_uplink_policy\test_uplink_policy.cpp:109:  EXPECT_EQ(UplinkPolicy::CONNECTING, p.state());
+.\test\test_uplink_policy\test_uplink_policy.cpp:110:  EXPECT_TRUE(p.holdsWifiOff());
+.\test\test_uplink_policy\test_uplink_policy.cpp:112:  EXPECT_FALSE(p.holdsWifiOff());
+.\test\test_uplink_policy\test_uplink_policy.cpp:115:TEST(UplinkPolicy, UnpluggedWhileStalledGoesStraightToNoLinkAfterHold) {
+.\test\test_uplink_policy\test_uplink_policy.cpp:116:  UplinkPolicy p;
+.\test\test_uplink_policy\test_uplink_policy.cpp:120:  ASSERT_EQ(UplinkPolicy::NO_IP, p.state());
+.\test\test_uplink_policy\test_uplink_policy.cpp:122:  EXPECT_EQ(UplinkPolicy::LINK_LOST, p.state());
+.\test\test_uplink_policy\test_uplink_policy.cpp:124:  EXPECT_EQ(UplinkPolicy::NO_LINK, p.state());
+.\test\test_uplink_policy\test_uplink_policy.cpp:127:TEST(UplinkPolicy, SurvivesMillisWraparound) {
+.\test\test_uplink_policy\test_uplink_policy.cpp:128:  UplinkPolicy p;
+.\test\test_uplink_policy\test_uplink_policy.cpp:132:  EXPECT_TRUE(p.holdsWifiOff());
+.\test\test_uplink_policy\test_uplink_policy.cpp:134:  EXPECT_EQ(UplinkPolicy::NO_LINK, p.state());
+.\test\test_uplink_policy\test_uplink_policy.cpp:137:TEST(UplinkPolicy, StateNamesAreStable) {
+.\test\test_uplink_policy\test_uplink_policy.cpp:138:  EXPECT_STREQ("connected", UplinkPolicy::stateName(UplinkPolicy::CONNECTED));
+.\test\test_uplink_policy\test_uplink_policy.cpp:139:  EXPECT_STREQ("connecting", UplinkPolicy::stateName(UplinkPolicy::CONNECTING));
+.\test\test_uplink_policy\test_uplink_policy.cpp:140:  EXPECT_STREQ("no_link", UplinkPolicy::stateName(UplinkPolicy::NO_LINK));
+.\test\test_uplink_policy\test_uplink_policy.cpp:141:  EXPECT_STREQ("no_link", UplinkPolicy::stateName(UplinkPolicy::LINK_LOST));
+.\test\test_uplink_policy\test_uplink_policy.cpp:142:  EXPECT_STREQ("no_ip", UplinkPolicy::stateName(UplinkPolicy::NO_IP));
+.\test\test_uplink_policy\test_uplink_policy.cpp:143:  EXPECT_STREQ("detecting", UplinkPolicy::stateName(UplinkPolicy::DETECTING));
+.\test\test_uplink_policy\test_uplink_policy.cpp:144:  EXPECT_STREQ("unavailable", UplinkPolicy::stateName(UplinkPolicy::DISABLED));
+.\src\helpers\wifi\SerialWifiInterface.h:13:  WiFiClient client;
+.\src\helpers\wifi\SerialWifiInterface.h:38:  SerialWifiInterface() : server(WiFiServer()), client(WiFiClient()) {
+.\src\helpers\ESP32Board.cpp:93:    WiFi.mode(WIFI_AP_STA);
+.\src\helpers\esp32\ESPNOWRadio.cpp:27:  WiFi.mode(WIFI_STA);
+.\examples\companion_radio\main.cpp:230:              WiFi.disconnectReasonName((wifi_err_reason_t)info.wifi_sta_disconnected.reason));
+.\examples\companion_radio\main.cpp:245:    WiFi.beginNoBlock(wifi_ssid, wifi_pwd);
+.\examples\companion_radio\main.cpp:248:    WiFi.begin(wifi_ssid, wifi_pwd);
+.\examples\companion_radio\main.cpp:332:        WiFi.beginNoBlock(wifi_ssid, wifi_pwd);   // no reconnect() on this platform
+.\examples\companion_radio\main.cpp:334:        WiFi.disconnect();
+.\src\helpers\bridges\ESPNowBridge.cpp:33:  WiFi.mode(WIFI_STA);
+.\src\helpers\bridges\ESPNowBridge.cpp:86:  WiFi.mode(WIFI_OFF);
+.\src\helpers\mqtt\MQTTUplink.cpp:10:#include <WiFiClientSecure.h>
+.\src\helpers\mqtt\MQTTUplink.cpp:131:    {"eastmesh-au", "eastmesh-au", "mqtt2.eastmesh.au", "wss://mqtt2.eastmesh.au:443/mqtt", kEastmeshBit, false, 0},
+.\src\helpers\mqtt\MQTTUplink.cpp:312:  WiFiClientSecure client;
+.\src\helpers\ethernet\uplink\UplinkPolicy.h:14:class UplinkPolicy {
+.\src\helpers\ethernet\uplink\UplinkPolicy.h:33:  UplinkPolicy() : _state(ETH_DISABLED), _since(0) {}
+.\src\helpers\ethernet\uplink\UplinkPolicy.h:84:  bool holdsWifiOff() const {
+.\src\helpers\ethernet\uplink\EthernetLink.h:10:// NetworkService polls update() each loop and asks holdsWifiOff(): Wi-Fi stays off while
+.\src\helpers\ethernet\uplink\EthernetLink.h:22:  static bool holdsWifiOff();
+.\src\helpers\ethernet\uplink\EthernetLink.cpp:11:#include "UplinkPolicy.h"
+.\src\helpers\ethernet\uplink\EthernetLink.cpp:18:UplinkPolicy s_policy;
+.\src\helpers\ethernet\uplink\EthernetLink.cpp:88:  const char* before = UplinkPolicy::stateName(s_policy.state());
+.\src\helpers\ethernet\uplink\EthernetLink.cpp:90:  const char* after = UplinkPolicy::stateName(s_policy.state());
+.\src\helpers\ethernet\uplink\EthernetLink.cpp:100:bool EthernetLink::holdsWifiOff() {
+.\src\helpers\ethernet\uplink\EthernetLink.cpp:101:  return s_hw_ok && s_policy.holdsWifiOff();
+.\src\helpers\ethernet\uplink\EthernetLink.cpp:123:  return UplinkPolicy::stateName(s_policy.state());
+.\src\helpers\NetworkService.cpp:102:    WiFi.disconnect(true, true);
+.\src\helpers\NetworkService.cpp:103:    WiFi.mode(WIFI_OFF);
+.\src\helpers\NetworkService.cpp:275:  if (EthernetLink::holdsWifiOff()) {
+.\src\helpers\NetworkService.cpp:340:    WiFi.disconnect(true, true);
+.\src\helpers\NetworkService.cpp:341:    WiFi.mode(WIFI_OFF);
+.\src\helpers\NetworkService.cpp:422:  if (EthernetLink::holdsWifiOff()) {
+.\src\helpers\NetworkService.cpp:428:      WiFi.disconnect(true, true);
+.\src\helpers\NetworkService.cpp:429:      WiFi.mode(WIFI_OFF);
+.\src\helpers\NetworkService.cpp:476:      WiFi.disconnect(false, false);
+.\src\helpers\NetworkService.cpp:486:      WiFi.disconnect(false, false);
+.\src\helpers\NetworkService.cpp:487:      WiFi.mode(WIFI_OFF);
+.\src\helpers\NetworkService.cpp:500:    WiFi.mode(WIFI_STA);
+.\src\helpers\NetworkService.cpp:508:    WiFi.begin(_prefs.wifi_ssid, _prefs.wifi_pwd, _prefs.wifi_channel);
+.\src\helpers\NetworkService.cpp:511:    WiFi.begin(_prefs.wifi_ssid, _prefs.wifi_pwd);
+.\src\helpers\NetworkService.cpp:625:  return EthernetLink::holdsWifiOff();
+.\src\helpers\NetworkService.cpp:640:  return EthernetLink::formatJson(out, out_size, getUplinkName(), EthernetLink::holdsWifiOff());
+.\src\helpers\ethernet\ch390\CH390EthernetInterface.h:7:#include <WiFiClient.h>
+.\src\helpers\ethernet\ch390\CH390EthernetInterface.h:14:  WiFiClient client;
