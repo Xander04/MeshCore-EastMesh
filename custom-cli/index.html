@@ -21,23 +21,18 @@
       
       
       <link rel="icon" href="../_assets/xjarid.svg">
-      <meta name="generator" content="zensical-0.0.32">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
     
     
       
-        <title>Custom CLI Commands - MeshCore EastMesh Docs</title>
+        <title>Custom CLI - MeshCore EastMesh Docs</title>
       
     
     
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
       
         
-      
-      <link rel="stylesheet" href="../assets/stylesheets/modern/main.53a7feaf.min.css">
-      
-        
-          
-        
-        <link rel="stylesheet" href="../assets/stylesheets/modern/palette.dfe2e883.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -51,14 +46,14 @@
         
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
     
       <link rel="stylesheet" href="../_stylesheets/extra.css">
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,a=__md_scope)=>JSON.parse(t.getItem(a.pathname+"."+e)),__md_set=(e,t,a=localStorage,_=__md_scope)=>{try{a.setItem(_.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -79,7 +74,7 @@
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
         
@@ -99,14 +94,14 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="./.." title="MeshCore EastMesh Docs" class="md-header__button md-logo" aria-label="MeshCore EastMesh Docs" data-md-component="logo">
+    <a href=".." title="MeshCore EastMesh Docs" class="md-header__button md-logo" aria-label="MeshCore EastMesh Docs" data-md-component="logo">
       
-  <img src="../_assets/xjarid.svg" alt="MeshCore EastMesh Docs">
+  <img src="../_assets/xjarid.svg" alt="logo">
 
     </a>
-    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+    <label class="md-header__button md-icon" for="__drawer">
       
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -118,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Custom CLI Commands
+              Custom CLI
             
           </span>
         </div>
@@ -158,30 +153,59 @@
     
       
       
-        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+        <label class="md-header__button md-icon" for="__search">
           
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
         </label>
-        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
-  <button type="button" class="md-search__button">
-    Search
-  </button>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
       
     
-    <div class="md-header__source">
-      
+    
+      <div class="md-header__source">
         <a href="https://github.com/xJARiD/MeshCore-EastMesh" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
     xJARiD/MeshCore-EastMesh
   </div>
 </a>
-      
-    </div>
+      </div>
+    
   </nav>
   
 </header>
@@ -207,9 +231,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="./.." title="MeshCore EastMesh Docs" class="md-nav__button md-logo" aria-label="MeshCore EastMesh Docs" data-md-component="logo">
+    <a href=".." title="MeshCore EastMesh Docs" class="md-nav__button md-logo" aria-label="MeshCore EastMesh Docs" data-md-component="logo">
       
-  <img src="../_assets/xjarid.svg" alt="MeshCore EastMesh Docs">
+  <img src="../_assets/xjarid.svg" alt="logo">
 
     </a>
     MeshCore EastMesh Docs
@@ -219,7 +243,7 @@
       <a href="https://github.com/xJARiD/MeshCore-EastMesh" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
     xJARiD/MeshCore-EastMesh
@@ -236,7 +260,7 @@
   
   
     <li class="md-nav__item">
-      <a href="./.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   
@@ -428,7 +452,7 @@
   
     <li class="md-nav__item md-nav__item--active">
       
-      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
         
@@ -452,7 +476,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <a href="././" class="md-nav__link md-nav__link--active">
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -471,8 +495,7 @@
       
         
 
-
-<nav class="md-nav md-nav--secondary" aria-label="On this page">
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
   
@@ -481,7 +504,7 @@
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
-      On this page
+      Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
@@ -779,24 +802,10 @@
               
               <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
-                  
-                    
-                    
-                    
-                      
-                    
-                    
-                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-                      <div class="md-sidebar-button__wrapper">
-                        <label class="md-sidebar-button" for="__toc"></label>
-                      </div>
-                    
-                  
                   <div class="md-sidebar__inner">
                     
 
-
-<nav class="md-nav md-nav--secondary" aria-label="On this page">
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
   
@@ -805,7 +814,7 @@
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
-      On this page
+      Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
@@ -1099,36 +1108,38 @@
               <article class="md-content__inner md-typeset">
                 
                   
+
+
   
     <a href="https://github.com/xJARiD/MeshCore-EastMesh/edit/main/eastmesh-docs/custom-cli.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-pen" viewBox="0 0 24 24"><path d="M12.659 22H18a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v9.34"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10.378 12.622a1 1 0 0 1 3 3.003L8.36 20.637a2 2 0 0 1-.854.506l-2.867.837a.5.5 0 0 1-.62-.62l.836-2.869a2 2 0 0 1 .506-.853z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
   
   
 
 
-<h1 id="custom-cli-commands">Custom CLI Commands<a class="headerlink" href="#custom-cli-commands" title="Permanent link">&para;</a></h1>
+<h1 id="custom-cli-commands">Custom CLI Commands</h1>
 <p>This page covers the EastMesh-specific CLI commands added in this repository.</p>
 <p>It does not try to repeat the full upstream MeshCore CLI surface.</p>
-<h2 id="start-here">Start Here<a class="headerlink" href="#start-here" title="Permanent link">&para;</a></h2>
+<h2 id="start-here">Start Here</h2>
 <p>If you are doing first-time setup, these are the commands most users need before anything else:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>set wifi.ssid &lt;your-ssid&gt;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>set wifi.pwd &lt;your-password&gt;
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>get wifi.status
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>set mqtt.iata &lt;code&gt;
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>get mqtt.status
-</span></code></pre></div>
+<pre><code class="language-text">set wifi.ssid &lt;your-ssid&gt;
+set wifi.pwd &lt;your-password&gt;
+get wifi.status
+set mqtt.iata &lt;code&gt;
+get mqtt.status
+</code></pre>
 <p>For observers with the local web panel, these are also useful:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>set web on
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>get web.status
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>set web off
-</span></code></pre></div>
+<pre><code class="language-text">set web on
+get web.status
+set web off
+</code></pre>
 <p>Use <code>set web on</code> while setting up or troubleshooting, then use <code>set web off</code> when a fixed observer needs maximum memory headroom.</p>
-<h2 id="observer-commands">Observer Commands<a class="headerlink" href="#observer-commands" title="Permanent link">&para;</a></h2>
+<h2 id="observer-commands">Observer Commands</h2>
 <p>These commands are available on <code>*_repeater_observer</code> firmware targets.</p>
 <p>No-argument <code>get</code> commands must be entered exactly as shown.</p>
-<h3 id="mqtt-status-and-routing">MQTT Status And Routing<a class="headerlink" href="#mqtt-status-and-routing" title="Permanent link">&para;</a></h3>
+<h3 id="mqtt-status-and-routing">MQTT Status And Routing</h3>
 <ul>
 <li><code>get mqtt.status</code>: shows Wi-Fi, NTP, IATA, endpoint status, custom endpoint transport, status publishing state, TX state, and <code>leaked:&lt;n&gt;</code> (MQTT clients intentionally left unfreed after a heap-integrity failure at teardown; should stay <code>0</code>).</li>
 <li><code>get mqtt.statuscfg</code>: shows whether periodic status messages are enabled as a simple <code>on</code> or <code>off</code> value. Most users can just use <code>get mqtt.status</code>.</li>
@@ -1138,7 +1149,7 @@
 <li><code>set mqtt.iata &lt;code&gt;</code>: sets the IATA/location code, for example <code>MEL</code>.</li>
 <li><code>set mqtt.iata UNSET</code>: marks MQTT IATA as not configured yet. While it is <code>UNSET</code>, enabled MQTT brokers stay disconnected until a real code is saved.</li>
 </ul>
-<h3 id="mqtt-identity">MQTT Identity<a class="headerlink" href="#mqtt-identity" title="Permanent link">&para;</a></h3>
+<h3 id="mqtt-identity">MQTT Identity</h3>
 <ul>
 <li><code>get mqtt.owner</code>: shows the configured owner public key.</li>
 <li><code>set mqtt.owner &lt;64-hex-char-public-key&gt;</code>: sets the owner public key used in JWT metadata.</li>
@@ -1147,7 +1158,7 @@
 <li><code>set mqtt.email &lt;email&gt;</code>: sets the owner email used in JWT metadata.</li>
 <li><code>mqtt.email &lt;email&gt;</code>: shorthand for setting the owner email.</li>
 </ul>
-<h3 id="mqtt-message-controls">MQTT Message Controls<a class="headerlink" href="#mqtt-message-controls" title="Permanent link">&para;</a></h3>
+<h3 id="mqtt-message-controls">MQTT Message Controls</h3>
 <ul>
 <li><code>get mqtt.packets</code>: shows whether packet messages are published.</li>
 <li><code>set mqtt.packets on|off</code>: enables or disables packet publishing.</li>
@@ -1157,7 +1168,7 @@
 <li><code>get mqtt.tx</code>: shows whether TX packets are included.</li>
 <li><code>set mqtt.tx on|off</code>: enables or disables TX packet publishing.</li>
 </ul>
-<h3 id="mqtt-endpoints">MQTT Endpoints<a class="headerlink" href="#mqtt-endpoints" title="Permanent link">&para;</a></h3>
+<h3 id="mqtt-endpoints">MQTT Endpoints</h3>
 <ul>
 <li><code>get mqtt.eastmesh-au</code></li>
 <li><code>set mqtt.eastmesh-au on|off</code></li>
@@ -1203,7 +1214,7 @@
 <li><code>mqtt.letsmesh.eu</code></li>
 <li><code>mqtt.letsmesh.us</code></li>
 </ul>
-<h3 id="wi-fi-settings-for-observers">Wi-Fi Settings For Observers<a class="headerlink" href="#wi-fi-settings-for-observers" title="Permanent link">&para;</a></h3>
+<h3 id="wi-fi-settings-for-observers">Wi-Fi Settings For Observers</h3>
 <ul>
 <li><code>get wifi.status</code>: shows SSID, connection state, raw Wi-Fi status code, IP, channel, and signal when connected, plus gateway health (<code>gw:ok|lost</code>) and the watchdog reconnect count (<code>wd:&lt;n&gt;</code>).</li>
 <li><code>get wifi.ssid</code>: shows the configured Wi-Fi SSID.</li>
@@ -1214,7 +1225,7 @@
 <li><code>wifi reconnect</code>: drops the current association and rejoins from a full channel scan. Use when a node reports connected but is unreachable over the network.</li>
 </ul>
 <p>Observers also run a connectivity watchdog: while Wi-Fi reports connected, the node ARP-probes its gateway every 30 seconds. If the gateway stays silent for 3 minutes (for example, an AP that keeps beaconing after losing its wired uplink), the node forces a full reconnect on its own, backing off up to 48 minutes between attempts while the outage persists. <code>wd:&lt;n&gt;</code> in <code>get wifi.status</code> counts these forced reconnects since boot.</p>
-<h3 id="ntp-settings-for-observers">NTP Settings For Observers<a class="headerlink" href="#ntp-settings-for-observers" title="Permanent link">&para;</a></h3>
+<h3 id="ntp-settings-for-observers">NTP Settings For Observers</h3>
 <ul>
 <li><code>get ntp.server1</code>: shows the primary NTP server.</li>
 <li><code>get ntp.server2</code>: shows the secondary NTP server.</li>
@@ -1224,7 +1235,7 @@
 <li><code>set ntp.server3 &lt;host&gt;</code>: sets the tertiary NTP server and restarts time sync.</li>
 </ul>
 <p>Default servers are <code>au.pool.ntp.org</code>, <code>time.google.com</code>, and <code>time.cloudflare.com</code>.</p>
-<h3 id="esp-now-bridge-settings-for-observer-esp-now-builds">ESP-NOW Bridge Settings For Observer ESP-NOW Builds<a class="headerlink" href="#esp-now-bridge-settings-for-observer-esp-now-builds" title="Permanent link">&para;</a></h3>
+<h3 id="esp-now-bridge-settings-for-observer-esp-now-builds">ESP-NOW Bridge Settings For Observer ESP-NOW Builds</h3>
 <p>These commands are available on <code>*_repeater_observer_espnow</code> firmware targets that use the ESP-NOW bridge transport.</p>
 <p>Bridge commands are for local ESP-NOW bridge use between nearby repeaters, such as linking repeaters on <code>Australia (Narrow)</code> and <code>Australia (Mid)</code>. They are not MQTT-over-WAN, VPN, or internet bridge controls.</p>
 <ul>
@@ -1243,14 +1254,14 @@
 <li>Use the same <code>bridge.channel</code> and <code>bridge.secret</code> on every ESP-NOW bridge node that should talk together.</li>
 </ol>
 <p>Example:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>&gt; get wifi.status
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>&gt; ssid:EastMesh-IoT status:connected code:3 state:connected ip:192.168.1.50 channel:6 rssi:-61 quality:78% signal:good gw:ok wd:0
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>&gt; get bridge.channel
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>&gt; 1
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>&gt; set bridge.channel 6
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>OK
-</span></code></pre></div>
-<h3 id="mqtt-bridge-settings-for-observer-mqtt-bridge-builds">MQTT Bridge Settings For Observer MQTT Bridge Builds<a class="headerlink" href="#mqtt-bridge-settings-for-observer-mqtt-bridge-builds" title="Permanent link">&para;</a></h3>
+<pre><code class="language-text">&gt; get wifi.status
+&gt; ssid:EastMesh-IoT status:connected code:3 state:connected ip:192.168.1.50 channel:6 rssi:-61 quality:78% signal:good gw:ok wd:0
+&gt; get bridge.channel
+&gt; 1
+&gt; set bridge.channel 6
+OK
+</code></pre>
+<h3 id="mqtt-bridge-settings-for-observer-mqtt-bridge-builds">MQTT Bridge Settings For Observer MQTT Bridge Builds</h3>
 <p>These commands are available on <code>*_repeater_observer_mqtt_bridge</code> firmware targets. The bridge relays raw, encrypted mesh packets to other bridge nodes through a peer MQTT broker you run. That broker is separate from the MQTT uplink brokers above.</p>
 <ul>
 <li><code>get bridge.enabled</code>, <code>set bridge.enabled on|off</code></li>
@@ -1267,7 +1278,7 @@
 <li><code>*_room_server_mqtt_bridge</code> room servers use the same topic and join an existing observer MQTT bridge when they share the broker and secret</li>
 <li>the README has a worked example of a <a href="https://github.com/xJARiD/MeshCore-EastMesh#peer-mosquitto-broker-lan">Mosquitto peer broker</a></li>
 </ul>
-<h3 id="web-panel-controls">Web Panel Controls<a class="headerlink" href="#web-panel-controls" title="Permanent link">&para;</a></h3>
+<h3 id="web-panel-controls">Web Panel Controls</h3>
 <ul>
 <li><code>get web</code></li>
 <li><code>get web.status</code>: shows whether the local HTTPS panel is available, plus <code>heals:&lt;n&gt;</code> (times the panel was restarted because internal heap was too fragmented for a TLS handshake) and <code>deferred:&lt;n&gt;</code> (start attempts postponed until heap headroom recovered).</li>
@@ -1279,7 +1290,7 @@
 <li><code>set.web.stats on|off</code>: enables or disables the dedicated <code>/stats</code> page and historical stats collection.</li>
 <li><code>purge sd</code>: deletes files and directories from the mounted SD card archive, then recreates the empty <code>/stats</code> archive directory so runtime stats capture can continue. It does not erase the internal repeater filesystem or stored settings.</li>
 </ul>
-<h3 id="runtime-diagnostics">Runtime Diagnostics<a class="headerlink" href="#runtime-diagnostics" title="Permanent link">&para;</a></h3>
+<h3 id="runtime-diagnostics">Runtime Diagnostics</h3>
 <ul>
 <li><code>memory</code>: shows current heap and PSRAM usage.</li>
 <li><code>stats-core</code>: shows battery, uptime, sticky error count, and outbound queue depth.</li>
@@ -1289,7 +1300,7 @@
 <blockquote>
 <p>If <code>noise_floor</code> reports <code>0</code>, check <code>get agc.reset.interval</code>; if it is not <code>0</code>, try <code>set agc.reset.interval 0</code> and test again.</p>
 </blockquote>
-<h3 id="flood-forwarding-limit">Flood Forwarding Limit<a class="headerlink" href="#flood-forwarding-limit" title="Permanent link">&para;</a></h3>
+<h3 id="flood-forwarding-limit">Flood Forwarding Limit</h3>
 <ul>
 <li><code>get flood.max.unscoped</code>: shows the hop limit for unscoped flood packets.</li>
 <li><code>set flood.max.unscoped &lt;0-64&gt;</code>: sets the hop limit for unscoped flood packets.</li>
@@ -1297,11 +1308,11 @@
 <li><code>set flood.max.advert &lt;0-64&gt;</code>: sets the hop limit for flooded advert packets.</li>
 </ul>
 <p>Observer builds default <code>flood.max.unscoped</code> to <code>64</code>. Lower values can limit how far unscoped flood traffic is repeated while leaving scoped/region flood forwarding controlled by <code>flood.max</code>.</p>
-<h3 id="board-battery-reporting">Board Battery Reporting<a class="headerlink" href="#board-battery-reporting" title="Permanent link">&para;</a></h3>
+<h3 id="board-battery-reporting">Board Battery Reporting</h3>
 <ul>
 <li>On observer builds, background battery sampling used for MQTT/status history is rate-limited to about once per minute. Explicit status and telemetry requests still refresh the reading immediately.</li>
 </ul>
-<h3 id="t-beam-1w-fan-control">T-Beam 1W Fan Control<a class="headerlink" href="#t-beam-1w-fan-control" title="Permanent link">&para;</a></h3>
+<h3 id="t-beam-1w-fan-control">T-Beam 1W Fan Control</h3>
 <p>These commands come from upstream MeshCore and are available on <code>LilyGo_TBeam_1W_*</code> builds (repeater, room server, and companion CLI).</p>
 <ul>
 <li><code>get fan</code>: shows the fan mode, last NTC board temperature, fan state, and remaining TX cooldown, for example <code>&gt; auto 34.5C fan=on cd=12s</code>.</li>
@@ -1323,7 +1334,7 @@
 <li>the earlier EastMesh <code>set fan timeout &lt;Ns&gt;</code> command has been removed; the post-TX cooldown is now fixed</li>
 <li>fan settings saved by older EastMesh builds are not migrated, so the fan returns to <code>auto</code> with the default thresholds after upgrading</li>
 </ul>
-<h2 id="room-server-mqtt-bridge-commands">Room Server MQTT Bridge Commands<a class="headerlink" href="#room-server-mqtt-bridge-commands" title="Permanent link">&para;</a></h2>
+<h2 id="room-server-mqtt-bridge-commands">Room Server MQTT Bridge Commands</h2>
 <p>These commands are available on <code>*_room_server_mqtt_bridge</code> firmware targets. There is one for every board that has a <code>*_repeater_observer_mqtt_bridge</code> build, for example <code>heltec_v4_room_server_mqtt_bridge</code>.</p>
 <p>This firmware is a normal MeshCore room server with four EastMesh additions:</p>
 <ul>
@@ -1332,20 +1343,20 @@
 <li>room sync, which shares room posts with other room servers on the same topic</li>
 <li>repeating, which is on by default so bridged packets reach LoRa</li>
 </ul>
-<h3 id="first-time-setup">First-Time Setup<a class="headerlink" href="#first-time-setup" title="Permanent link">&para;</a></h3>
+<h3 id="first-time-setup">First-Time Setup</h3>
 <p>From the serial console:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>set wifi.ssid &lt;your-ssid&gt;
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>set wifi.pwd &lt;your-password&gt;
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>set bridge.peer.host mqtt.example.com
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>set bridge.peer.port 1883
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>set bridge.peer.username &lt;user&gt;
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>set bridge.peer.password &lt;password&gt;
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>set bridge.secret &lt;shared-secret&gt;
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>set bridge.topic EastMesh
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>get bridge.sync
-</span></code></pre></div>
+<pre><code class="language-text">set wifi.ssid &lt;your-ssid&gt;
+set wifi.pwd &lt;your-password&gt;
+set bridge.peer.host mqtt.example.com
+set bridge.peer.port 1883
+set bridge.peer.username &lt;user&gt;
+set bridge.peer.password &lt;password&gt;
+set bridge.secret &lt;shared-secret&gt;
+set bridge.topic EastMesh
+get bridge.sync
+</code></pre>
 <p>Every room server that should share posts must use the same broker, <code>bridge.secret</code>, and <code>bridge.topic</code>.</p>
-<h3 id="wi-fi-and-ntp">Wi-Fi And NTP<a class="headerlink" href="#wi-fi-and-ntp" title="Permanent link">&para;</a></h3>
+<h3 id="wi-fi-and-ntp">Wi-Fi And NTP</h3>
 <ul>
 <li><code>get wifi.status</code>, <code>get wifi.ssid</code>, <code>get wifi.powersaving</code></li>
 <li><code>set wifi.ssid &lt;ssid&gt;</code>, <code>set wifi.pwd &lt;password&gt;</code>, <code>set wifi.powersaving none|min|max</code></li>
@@ -1353,7 +1364,7 @@
 <li><code>get ntp.server1|2|3</code>, <code>set ntp.server1|2|3 &lt;host&gt;</code></li>
 </ul>
 <p>These work the same as on observer builds. Wi-Fi is only brought up while the web panel or the bridge needs it.</p>
-<h3 id="bridge-broker">Bridge Broker<a class="headerlink" href="#bridge-broker" title="Permanent link">&para;</a></h3>
+<h3 id="bridge-broker">Bridge Broker</h3>
 <ul>
 <li><code>get bridge.status</code>: shows bridge state (<code>online</code>, <code>connecting</code>, <code>no-wifi</code>, <code>off</code>, or <code>no-host</code>), the peer broker, and whether repeat is on.</li>
 <li><code>get bridge.enabled</code>, <code>set bridge.enabled on|off</code></li>
@@ -1365,7 +1376,7 @@
 </ul>
 <p>The bridge uses plain MQTT over TCP. TLS (<code>8883</code>) and WebSockets are not supported on the bridge connection.</p>
 <p>Mesh packets are bridged on the shared <code>meshcore/bridge/packets</code> topic, so a room server bridges with any EastMesh MQTT bridge repeaters that use the same broker and secret.</p>
-<h3 id="room-sync">Room Sync<a class="headerlink" href="#room-sync" title="Permanent link">&para;</a></h3>
+<h3 id="room-sync">Room Sync</h3>
 <ul>
 <li><code>get bridge.topic</code>: shows the room sync topic, or <code>-</code> when sync is off.</li>
 <li><code>set bridge.topic &lt;name&gt;</code>: sets the room sync topic and reconnects the bridge. Use 1-32 characters from <code>A-Z a-z 0-9 - _</code>.</li>
@@ -1383,19 +1394,19 @@
 <li>Clients see a synced post under the original author's public key. The app shows the author's name only if it already knows that contact.</li>
 </ul>
 <p><code>room.post &lt;text&gt;</code> from the serial console or web panel is a quick way to test sync without a client app.</p>
-<h3 id="repeating">Repeating<a class="headerlink" href="#repeating" title="Permanent link">&para;</a></h3>
+<h3 id="repeating">Repeating</h3>
 <ul>
 <li><code>get repeat</code>, <code>set repeat on|off</code></li>
 </ul>
 <p>Upstream MeshCore room servers no longer repeat. This firmware turns repeating back on by default so packets arriving over the bridge are transmitted on LoRa. A board that already has saved settings from an upstream room server keeps its existing <code>repeat off</code> until you run <code>set repeat on</code>.</p>
-<h3 id="web-panel">Web Panel<a class="headerlink" href="#web-panel" title="Permanent link">&para;</a></h3>
+<h3 id="web-panel">Web Panel</h3>
 <ul>
 <li><code>get web</code>, <code>get web.status</code></li>
 <li><code>set web on|off</code></li>
 <li><code>get mqtt.client_env</code>: shows the PlatformIO env this firmware was built for (same command as observer builds), for example <code>heltec_v4_room_server_mqtt_bridge</code>. The panel's firmware upload uses it to refuse <code>.bin</code> files named for a different board.</li>
 </ul>
-<p>The room server panel is described in <a href=".././web-panel/#room-server-web-panel">Room Server Web Panel</a>.</p>
-<h2 id="web-panel-cli-access">Web Panel CLI Access<a class="headerlink" href="#web-panel-cli-access" title="Permanent link">&para;</a></h2>
+<p>The room server panel is described in <a href="../web-panel/#room-server-web-panel">Room Server Web Panel</a>.</p>
+<h2 id="web-panel-cli-access">Web Panel CLI Access</h2>
 <p>When the repeater web panel is enabled and you are authenticated, the browser CLI panel can run the same CLI commands accepted by the repeater.</p>
 <p>Notes:</p>
 <ul>
@@ -1408,10 +1419,8 @@
 <li><code>start ota</code> uses the repeater's existing Wi-Fi address when already connected, or starts the <code>MeshCore-OTA</code> access point when Wi-Fi is not connected</li>
 <li>the <code>/app</code> Regions shortcut runs the existing MeshCore region commands in sequence: <code>region put au</code>, <code>region put au-STATE</code>, <code>region allowf au</code>, <code>region allowf au-STATE</code>, then <code>region save</code></li>
 </ul>
-<h2 id="heap-health-check-script">Heap Health Check Script<a class="headerlink" href="#heap-health-check-script" title="Permanent link">&para;</a></h2>
+<h2 id="heap-health-check-script">Heap Health Check Script</h2>
 <p><code>eastmesh-tools/web-heap-check.sh &lt;host&gt; [--stress] [--rounds N]</code> reads <code>memory</code>, <code>get web.status</code>, <code>get mqtt.status</code> and <code>get wifi.status</code> over the HTTPS API and, with <code>--stress</code>, simulates browser page-load bursts before re-reading <code>memory</code>. Authenticate with <code>REPEATER_PASSWORD</code> or <code>REPEATER_TOKEN</code> in the environment (or enter the password at the prompt). Watch <code>heap_max</code> (largest internal block; TLS needs ~40KB), <code>heap_min</code>, and the <code>heals</code>/<code>deferred</code>/<code>leaked</code> counters.</p>
-
-
 
 
 
@@ -1442,8 +1451,8 @@
   
   
     Made with
-    <a href="https://zensical.org/" target="_blank" rel="noopener">
-      Zensical
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
     </a>
   
 </div>
@@ -1461,10 +1470,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate":null,"base":"..","features":["content.action.edit","content.code.copy","search.highlight","search.suggest"],"search":"../assets/javascripts/workers/search.e2d2d235.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.action.edit", "content.code.copy", "search.highlight", "search.suggest"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.91a19a9e.min.js"></script>
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
     
   </body>
